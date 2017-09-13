@@ -1,56 +1,80 @@
 package employee;
-//import java.util.InputMismatchException;
-//import java.util.Scanner;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeMap;
 
-public abstract class Employee  {
+import configuration.Constants;
+
+public class Employee implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	protected String name;
-	protected long id;
-	protected long tel;
+	protected String id;
+	protected String tel;
 	protected int bankAccount;
 	protected int employeeNumber;
 	protected Set<Integer> workPlacesId = new LinkedHashSet<Integer>();
+	
+	protected String employeesFile;
 	
 	/** ======================================================
 	 * Employee Constructor
 	 * @param name
 	 * @throws EmployeeException
+	 * @throws IOException 
 	 ====================================================== */
+	
 	public Employee(
 			String inputName, 
-			long id, 
-			long tel, 
+			String id, 
+			String tel, 
 			int bankAccount, 
-			int empNumber) throws EmployeeException
+			int empNumber) throws EmployeeException, IOException
 	{
 		this.name = inputName;
 		this.id = id;
 		this.tel = tel;
 		this.bankAccount = bankAccount;
 		this.employeeNumber = empNumber;
+		this.employeesFile = Constants.EMPLOYEE_LIST;
+		
 	}
 
 	 /** ------------------------------------------------------
 	 * Print Employee Object to the console
 	 * @return String
 	 ------------------------------------------------------- */
+	
 	@Override
 	public String toString() {
-		String returnStr = "";
-		returnStr += "\n name: \t"		+ this.name;
-		returnStr += "\n Tel: \t"		+ this.tel;
-		returnStr += "\n Id: \t"			+ this.id;
-		returnStr += "\n Emp #: \t"		+ this.employeeNumber;
-		returnStr += "\n Works in: \t"	+ this.workPlacesId.toString();
+		Map<String, String> employee = new TreeMap<String, String>();
+		String returnStr = Integer.toString(this.employeeNumber) + ": ";
 		
-		return returnStr;
+		employee.put("Name", this.name);
+		employee.put("Id", this.id);
+		employee.put("Tel", this.tel);
+		employee.put("EmpId", Integer.toString(this.employeeNumber) );
+		employee.put("workPlaceId", this.workPlacesId.toString());
+		
+		return returnStr + employee.toString();
 	}
 	
 	// GETERS :
-	public long getId () { return this.id; }
+	public String getId () { return this.id; }
+	public String getTel () { return this.tel; }
 	public int getEmployeeNumber () { return this.employeeNumber; }
 	public String getName () { return this.name; }
 	public Set<Integer> getAllWorkPlaces () { return this.workPlacesId; }
@@ -69,45 +93,110 @@ public abstract class Employee  {
 	}
 	
 	/** ------------------------------------------------------
+	 * Check if the employee exist in the employee list
+	 * @return
+	 ------------------------------------------------------ */
+	
+	public boolean isEmployeeExist () {
+		File empFile = new File (this.employeesFile);
+		
+		try {
+		    Scanner scan = new Scanner(empFile);
+
+		    while (scan.hasNextLine()) {
+		        String line = scan.nextLine();
+		        if( line.indexOf(this.id) > -1 ) {
+		        		scan.close();
+		        		return true;
+		        }
+		        
+		    }
+		    scan.close();
+		    return false;
+		    
+		} catch(FileNotFoundException e) { 
+			return false;
+		}
+	}
+	
+	/** -------------------------------------------------------- 
+	 * Save Employee to employees list file
+	 * @throws IOException
+	 * @throws EmployeeException 
+	 * 	 -------------------------------------------------------- */
+	
+	public void save() throws IOException, EmployeeException {
+	
+		if( !this.isEmployeeExist() ) {
+			
+			FileWriter fw = new FileWriter(this.employeesFile, true);
+		    BufferedWriter bw = new BufferedWriter(fw);
+		    PrintWriter out = new PrintWriter(bw);
+				
+		    out.println(this.toString());
+		    out.close();
+		    
+		}
+		else {
+			throw new EmployeeException("Employee allready exist!");
+		}
+	}
+
+	/** -------------------------------------------------------- 
+	 * Serialize object 
+	 * @throws IOException
+	 --------------------------------------------------------*/
+	public void serialize() throws IOException {
+		String fileName;
+		FileWriter fw = new FileWriter(this.employeesFile);
+		fw.close();
+		
+		FileOutputStream fout = null;
+		ObjectOutputStream oos = null;
+
+		try {
+			fileName = this.employeesFile.replace(".txt", ".ser");
+			fout = new FileOutputStream(fileName);
+			oos = new ObjectOutputStream(fout);
+			oos.writeObject(this);
+
+			System.out.println("Employee Saved");
+
+		} catch (Exception ex) {
+			
+			ex.printStackTrace();
+			
+		} finally {
+
+			if (fout != null) {
+				try {
+					fout.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (oos != null) {
+				try {
+					oos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+	}
+	
+	/** ------------------------------------------------------
 	 * Identify Employee object by id + randomNumber + name
 	 ------------------------------------------------------ */
 	@Override
 	public int hashCode() {
 		Random rnd = new Random();
-		double resault;
-	
-		resault = rnd.nextDouble() + this.id + this.name.codePointCount(0, this.name.length());
-		return (int)resault; 
+		int result;
+		
+		result = rnd.nextInt() + Integer.parseInt(this.id);
+		return result; 
 	}
 	
-	
-	
-//	public static void main(String [] args) {
-//		
-//		Scanner scan;
-//		String userInputName;
-//		
-//		try {
-//			scan = new Scanner(System.in);
-//			System.out.println("Please enter your employee name: \n");
-//			userInputName = scan.next();
-//		
-//			Employee newEmployee  = new Employee(
-//				userInputName,
-//				1,
-//				333,
-//				444,
-//				12
-//			);
-//			newEmployee.setWorkPlaceId(222);
-//			System.out.println(newEmployee.toString());
-//		
-//		} catch (InputMismatchException e) {
-//			System.out.println("Invalid input: " + e.getMessage());
-//		} catch(EmployeeException e) {
-//			System.out.println("Employee exception: " + e.getMessage());
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//		}
-//	}
 }
