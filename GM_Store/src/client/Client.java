@@ -12,37 +12,32 @@ public class Client {
 		DataInputStream consoleInput;
 		PrintStream toNetOutputStream;
 		
-		String line = "fromClient";
+		String clientMsg = "set_employee";
 		
 		try {
-			socket = new Socket("localhost", 7000);
+			socket = new Socket("localhost", 7000) ;
 			
 			fromNetInput = new DataInputStream(socket.getInputStream());
 			consoleInput = new DataInputStream(System.in);
 			toNetOutputStream = new PrintStream(socket.getOutputStream());
 			
-			SignInScreen signIn = new SignInScreen();
-			signIn.setVisible(true);
-		
-			System.out.println("->> Recieved from server " + fromNetInput.readLine());
-			
-			
-			
-			toNetOutputStream.println(line);
-			
-			while(!line.equals("endserver")) {
-				
-				toNetOutputStream.println(line);
-				
+			try {
+				SignIn signInwindow = new SignIn();
+				signInwindow.frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-
+			toNetOutputStream.print(clientMsg);
+//			System.out.print("from server: " + fromNetInput.readLine() );
+			
 			
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			System.err.println("Exception: " + e);
 		} finally {
 			try {
 				socket.close();
 			} catch (IOException e) {
+				System.err.println("Socket.close() exception: " + e.getMessage());
 				System.err.println(e.getMessage());
 			}
 		}

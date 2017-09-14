@@ -17,46 +17,54 @@ public class Server {
 	    		final ServerSocket server = new ServerSocket(7000);
 	    		Date date = new Date();
 	    		
-	    		System.out.println(date + "->> Server waits for client <<-\n");
+	    		System.out.println(date + ":  Server waits for client\n");
 	    		
 	    		while(true) {
 	    			final Socket socket = server.accept(); // blocking 
+	    			System.out.println(date + ": Client connected");
 	    			
 	    			new Thread(new Runnable() {
 	    				public void run() {
 	    					String clientAddress = "";
-	    					String line = "";
+	    					String clientMsg = "";
+	    				
 	    					
 	    					try {
 	    						clientAddress = socket.getInetAddress() + ":" + socket.getPort();
-	    						System.out.println(date + ": Client connected from" + clientAddress );
+	    						System.out.println(date + ": Client connected from: " + clientAddress );
 	    		    			
 		    		    			DataInputStream inputStream = new DataInputStream(socket.getInputStream());
 		    		    			PrintStream outputStream = new PrintStream(socket.getOutputStream());
 	    						
 		    		    			outputStream.print("Welcome to Server!");
-		    		    			System.out.println(date + "->> Recieved line: " + inputStream.toString() + "\n");
 		    		    			
 //		    		    			Employee grisha = new Cashier("Grisha", "317612950", "0548131173", 44332, 01);
-		    		    			line = inputStream.readLine();
+		    		    			clientMsg = inputStream.readLine();
 		    		    			
-		    		    			while(!line.equals("goodbye")) {
-//		    		    				line = inputStream.readLine(); 
-		    		    				outputStream.println(line);
+		    		    			while(!clientMsg.equals("goodbye")) {
+		    		    				
+		    		    				switch(clientMsg) {
+		    		    					case "set_employee" : 
+		    		    						Employee grisha = new Cashier("Grisha", "317612950", "0548131173", 44332, 01);
+		    		    						System.out.println("Set Employee: " + grisha.toString());
+		    		    					case "sign_in" :
+		    		    						Auth user = new Auth();
+		    		    				}
+		    		    				
+		    		    				clientMsg = inputStream.readLine(); 
 //		    		    				System.out.println(date + "->> Recieved line: " + inputStream.toString());
 		    		    			};
 		    		    			
 		    		    			
 	    					} catch (IOException e) {
-	    		    				System.err.println(e);
+	    		    				System.err.println("IOexception: " + e.getMessage());
 		    		    		} catch( Exception e) {
-		    		    			System.err.println(e);
+		    		    			System.err.println("Exception: " + e);
 		    		    		} finally {
 		    		    			try {
 		    		    				socket.close();
-		    		    				server.close();
 		    		    			} catch (IOException e) {
-		    		    				System.err.println(e);
+		    		    				System.err.println("Socket.close() exception: " + e);
 		    		    			}
 		    		    		}
 	    				}	
