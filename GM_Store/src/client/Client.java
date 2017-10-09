@@ -1,47 +1,33 @@
 package client;
 
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
-	public static void main(String [] args) {
-		Socket socket = null;
-		DataInputStream fromNetInput;
-		DataInputStream consoleInput;
-		PrintStream toNetOutputStream;
-		
-		String clientMsg = "set_employee";
+	public static void main (String [] args) {
+		String responseText;
 		
 		try {
-			socket = new Socket("localhost", 7000) ;
+			Socket socket= new Socket("localhost", 7000);
+			Scanner response = new Scanner(socket.getInputStream());
+			PrintStream request = new PrintStream(socket.getOutputStream());
 			
-			fromNetInput = new DataInputStream(socket.getInputStream());
-			consoleInput = new DataInputStream(System.in);
-			toNetOutputStream = new PrintStream(socket.getOutputStream());
+			// Initiate SignIn screen
+			SignInScreen signin = new SignInScreen(request);
+			signin.frame.setVisible(true);
 			
-			try {
-				SignIn signInwindow = new SignIn();
-				signInwindow.frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			toNetOutputStream.print(clientMsg);
-//			System.out.print("from server: " + fromNetInput.readLine() );
+			// Waiting for server response on signIn
+			responseText = response.nextLine();
+			
+			System.out.println("SignIn response: " + responseText);
 			
 			
-		} catch (Exception e) {
-			System.err.println("Exception: " + e);
-		} finally {
-			try {
-				socket.close();
-			} catch (IOException e) {
-				System.err.println("Socket.close() exception: " + e.getMessage());
-				System.err.println(e.getMessage());
-			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 		
 	}
 }

@@ -5,6 +5,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.sql.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -19,18 +23,18 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-
-
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
+import org.json.simple.JSONObject;
 
-public class SignIn {
+public class SignInScreen {
 
 	JFrame frame;
 	private JTextField textField;
 	private JPasswordField passwordField;
-
+	private PrintStream outputStream;
+	private JSONObject jsonData;
 	/**
 	 * Launch the application.
 	 */
@@ -38,8 +42,8 @@ public class SignIn {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					SignIn window = new SignIn();
-					window.frame.setVisible(true);
+//					SignInScreen window = new SignInScreen();
+//					window.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -49,15 +53,16 @@ public class SignIn {
 
 	/**
 	 * Create the application.
+	 * @wbp.parser.entryPoint
 	 */
-	public SignIn() {
-		initialize();
+	public SignInScreen(PrintStream request) {
+		initialize(request);
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize(PrintStream output) {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,12 +89,29 @@ public class SignIn {
 		passwordField.setBounds(151, 101, 215, 26);
 		frame.getContentPane().add(passwordField);
 		
+		jsonData = new JSONObject();
+		outputStream = output;
 		btnSignIn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				JSONObject signInJson = new JSONObject();
+				
 				if( textField.getText().isEmpty() || (passwordField.getText().isEmpty()))
 					JOptionPane.showMessageDialog(null, "Data Missing");
-				else		
-				JOptionPane.showMessageDialog(null, "Data Submitted");
+				else	 {
+					signInJson.put("username", textField.getText());
+					signInJson.put("password", passwordField.getText());
+					
+					jsonData.put("signin", signInJson);
+					
+					outputStream.println(jsonData.toJSONString());
+					System.out.println("SignIn data sent: " + jsonData.toJSONString());
+					
+					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Username: " + signInJson.get("username")  + " \nPassword: " + signInJson.get("password"));
+				}	
+					
+				
 			}
 		});
 	}

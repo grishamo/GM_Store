@@ -22,6 +22,7 @@ public class Employee implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	protected String name;
+	protected String last_name;
 	protected String id;
 	protected String tel;
 	protected int bankAccount;
@@ -32,10 +33,14 @@ public class Employee implements Serializable {
 	
 	/** ======================================================
 	 * Employee Constructor
-	 * @param name
+	 * @param inputName
+	 * @param id
+	 * @param tel
+	 * @param bankAccount
+	 * @param empNumber
 	 * @throws EmployeeException
-	 * @throws IOException 
-	 ====================================================== */
+	 * @throws IOException
+	 ==================================================== */
 	
 	public Employee(
 			String inputName, 
@@ -61,7 +66,6 @@ public class Employee implements Serializable {
 	@Override
 	public String toString() {
 		Map<String, String> employee = new TreeMap<String, String>();
-		String returnStr = Integer.toString(this.employeeNumber) + ": ";
 		
 		employee.put("Name", this.name);
 		employee.put("Id", this.id);
@@ -69,7 +73,7 @@ public class Employee implements Serializable {
 		employee.put("EmpId", Integer.toString(this.employeeNumber) );
 		employee.put("workPlaceId", this.workPlacesId.toString());
 		
-		return returnStr + employee.toString();
+		return employee.toString();
 	}
 	
 	// GETERS :
