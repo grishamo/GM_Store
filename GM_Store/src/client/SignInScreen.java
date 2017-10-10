@@ -67,8 +67,8 @@ public class SignInScreen {
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JLabel lblUserName = new JLabel("User name :");
-		lblUserName.setBounds(63, 70, 74, 16);
+		JLabel lblUserName = new JLabel("Id :");
+		lblUserName.setBounds(70, 70, 74, 16);
 		
 		textField = new JTextField();
 		textField.setBounds(151, 65, 215, 26);
@@ -91,6 +91,7 @@ public class SignInScreen {
 		
 		jsonData = new JSONObject();
 		outputStream = output;
+		
 		btnSignIn.addActionListener(new ActionListener() {
 			
 			@Override
@@ -100,7 +101,7 @@ public class SignInScreen {
 				if( textField.getText().isEmpty() || (passwordField.getText().isEmpty()))
 					JOptionPane.showMessageDialog(null, "Data Missing");
 				else	 {
-					signInJson.put("username", textField.getText());
+					signInJson.put("id", textField.getText());
 					signInJson.put("password", passwordField.getText());
 					
 					jsonData.put("signin", signInJson);
@@ -108,7 +109,7 @@ public class SignInScreen {
 					outputStream.println(jsonData.toJSONString());
 					System.out.println("SignIn data sent: " + jsonData.toJSONString());
 					
-					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Username: " + signInJson.get("username")  + " \nPassword: " + signInJson.get("password"));
+					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Id: " + signInJson.get("id")  + " \nPassword: " + signInJson.get("password"));
 				}	
 					
 				

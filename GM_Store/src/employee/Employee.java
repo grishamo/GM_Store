@@ -15,6 +15,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.json.simple.JSONObject;
+
 import configuration.Constants;
 
 public class Employee implements Serializable {
@@ -58,7 +60,11 @@ public class Employee implements Serializable {
 		
 	}
 
-	 /** ------------------------------------------------------
+	 public Employee(JSONObject keyvalue) {
+		// TODO Auto-generated constructor stub
+	}
+
+	/** ------------------------------------------------------
 	 * Print Employee Object to the console
 	 * @return String
 	 ------------------------------------------------------- */

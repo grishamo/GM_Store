@@ -5,8 +5,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import auth.AuthExceptions;
 
 public class ClientHandler implements Runnable{
 	
@@ -14,14 +13,11 @@ public class ClientHandler implements Runnable{
     PrintStream response;
     Scanner request;
     String reqData;
-    JSONObject jsonData;
-    JSONParser jsonParser;
     
     public ClientHandler(Socket clientSocket) throws IOException{
         this.clientSocket = clientSocket;
         this.response = new PrintStream(clientSocket.getOutputStream());
         this.request = new Scanner(clientSocket.getInputStream());
-        this.jsonParser = new  JSONParser();
     }
     
     @Override
@@ -29,13 +25,24 @@ public class ClientHandler implements Runnable{
         while(true){
 		    try {
 		    		
-		    		reqData = request.nextLine();
-		    		jsonData = (JSONObject) jsonParser.parse(reqData);
+		    		reqData = request.nextLine();	
+		    	
+		    		ServerRequestHandler requestHandler = new ServerRequestHandler(reqData);
+				response.println( requestHandler.response() );	
+				
 		    		
-		    		ServerRequestHandler requestHandler = new ServerRequestHandler(jsonData);
-				response.println("server responce: " + requestHandler.response());	
-		    		
-		    } catch (Exception e) {
+		    }
+		    catch( AuthExceptions e ) {
+			    	System.out.println(e.getMessage());
+		    		try {
+					clientSocket.close();
+					return;
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		    }
+		    catch (Exception e) {
 		    		System.out.println(e.getMessage());
 		    		try {
 					clientSocket.close();

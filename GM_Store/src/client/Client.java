@@ -21,6 +21,8 @@ public class Client {
 			// Waiting for server response on signIn
 			responseText = response.nextLine();
 			
+			//TODO: render an employee screen
+			
 			System.out.println("SignIn response: " + responseText);
 			
 			
