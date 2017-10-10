@@ -1,1 +1,1 @@
-{EmpId=1, Id=317612950, Name=Grisha, Tel=0548131174, empType=cashier, workPlaceId=[]}
+{"workPlaceId":"[]","empType":"cashier","Tel":"0548131174","Id":"317612950","EmpId":"1","Name":"grisha"}

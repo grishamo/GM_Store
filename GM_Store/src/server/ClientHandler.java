@@ -6,6 +6,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import auth.AuthExceptions;
+import employee.Cashier;
+import employee.Employee;
 
 public class ClientHandler implements Runnable{
 	
@@ -25,22 +27,20 @@ public class ClientHandler implements Runnable{
         while(true){
 		    try {
 		    		
-		    		reqData = request.nextLine();	
 		    	
+		    		reqData = request.nextLine();	
+//		    		Employee grisha = new Cashier("grisha", "317612950", "04813131173", 1234, 1);
+//		    		grisha.save();
+		    		
+		    		
 		    		ServerRequestHandler requestHandler = new ServerRequestHandler(reqData);
-				response.println( requestHandler.response() );	
-				
+		    		String respStr = requestHandler.response();
+				response.println(respStr);	
 		    		
 		    }
 		    catch( AuthExceptions e ) {
 			    	System.out.println(e.getMessage());
-		    		try {
-					clientSocket.close();
-					return;
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+			    	response.println("null");
 		    }
 		    catch (Exception e) {
 		    		System.out.println(e.getMessage());

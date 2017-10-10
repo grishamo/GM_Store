@@ -71,7 +71,7 @@ public class Employee implements Serializable {
 	
 	@Override
 	public String toString() {
-		Map<String, String> employee = new TreeMap<String, String>();
+		JSONObject employee = new JSONObject();
 		
 		employee.put("Name", this.name);
 		employee.put("Id", this.id);
@@ -79,7 +79,7 @@ public class Employee implements Serializable {
 		employee.put("EmpId", Integer.toString(this.employeeNumber) );
 		employee.put("workPlaceId", this.workPlacesId.toString());
 		
-		return employee.toString();
+		return employee.toJSONString();
 	}
 	
 	// GETERS :

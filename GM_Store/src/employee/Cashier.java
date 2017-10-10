@@ -34,7 +34,7 @@ public class Cashier extends Employee {
 
 	@Override
 	public String toString() {
-		Map<String, String> employee = new TreeMap<String, String>();
+		 JSONObject employee = new JSONObject();
 		
 		employee.put("Name", this.name);
 		employee.put("Id", this.id);

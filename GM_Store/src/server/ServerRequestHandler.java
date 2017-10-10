@@ -10,6 +10,7 @@ import auth.Auth;
 import auth.AuthExceptions;
 import employee.Cashier;
 import employee.Employee;
+import employee.EmployeeException;
 import reports.Reports;
 
 public class ServerRequestHandler {
@@ -25,23 +26,30 @@ public class ServerRequestHandler {
 		 * @throws IOException
 		 * @throws ParseException
 		 * @throws AuthExceptions 
+		 * @throws EmployeeException 
 		 */
-		public ServerRequestHandler (String clientData) throws IOException, ParseException, AuthExceptions {
+		public ServerRequestHandler (String clientData) throws 
+		IOException, ParseException, AuthExceptions, EmployeeException 
+		{
 			jsonParser = new  JSONParser();
-			reports = new Reports();
-			reqObj = (JSONObject) jsonParser.parse(clientData);
+			Reports reports = new Reports();
+			Auth signIn = new  Auth();
+			
+			reqObj = ( JSONObject ) jsonParser.parse(clientData);
 			
 			for (Object key : reqObj.keySet()) {
 		        
-		        String keyStr = (String)key;
+		        String keyStr = (String) key;
 		        JSONObject keyvalue = (JSONObject) reqObj.get(keyStr);
 		        
 		        System.out.println("ServerRequestHandler:KEY: "+ keyStr);
 		        
-		        switch(keyStr) {
+		        switch( keyStr ) {
 			        case "signin":
-			        		Auth signIn = new  Auth(keyvalue);
-			        		this.responseStr = signIn.getResponse();
+			        		if ( signIn.isAuth(keyvalue) ) {
+			        			this.responseStr = reports.getEmployeeById( (String) keyvalue.get("id") );
+			        		}	  
+			        		else { this.responseStr = null; }
 				        	break;
 			        case "setCashier":
 //			        		Employee newEmp = new Cashier(keyvalue);

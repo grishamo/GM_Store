@@ -18,7 +18,7 @@ public class Server {
     	 	ArrayList<ObjectOutputStream> clientstreams = new ArrayList<ObjectOutputStream>();
     	
     		try {
-            ServerSocket mySocket = new ServerSocket(7000);
+            ServerSocket mySocket = new ServerSocket(5000);
             while(true){
                 try {
                     System.out.println("Ready to receive");

@@ -58,7 +58,14 @@ public class SignInScreen {
 	public SignInScreen(PrintStream request) {
 		initialize(request);
 	}
-
+	
+	public SignInScreen() {
+	}
+	
+	public void showMessage(String text) {
+		JOptionPane.showMessageDialog(null, text);
+	}
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
@@ -106,10 +113,10 @@ public class SignInScreen {
 					
 					jsonData.put("signin", signInJson);
 					
-					outputStream.println(jsonData.toJSONString());
+					outputStream.println(jsonData.toJSONString() + '\n');
 					System.out.println("SignIn data sent: " + jsonData.toJSONString());
 					
-					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Id: " + signInJson.get("id")  + " \nPassword: " + signInJson.get("password"));
+//					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Id: " + signInJson.get("id")  + " \nPassword: " + signInJson.get("password"));
 				}	
 					
 				

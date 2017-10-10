@@ -17,11 +17,14 @@ public class Auth {
 	
 	// Constructor: ----------------------------------------------------------------------
 	
-	public Auth (JSONObject signInData) throws FileNotFoundException, AuthExceptions {
+	public Auth () {
+	}
+	
+	public boolean isAuth (JSONObject signInData) throws FileNotFoundException, AuthExceptions {
 		this.id = signInData.get("id").toString();
 		this.password = signInData.get("password").toString();
 		
-		if ( this.isAuth( id, password ) ) {
+		if ( this.isExistInDB( id, password ) ) {
 			System.out.println("User Exist!");
 			this.responseStr = this.getEmployeeById(id);
 			if( responseStr == null ) {
@@ -31,6 +34,8 @@ public class Auth {
 		else {
 			throw new AuthExceptions("User doesn't exist!");
 		};
+		
+		return true;
 	}
 	
 	// Methods: ----------------------------------------------------------------------------
@@ -58,7 +63,7 @@ public class Auth {
 	}
 	
 	
-	public boolean isAuth(String id, String pass) throws FileNotFoundException {
+	public boolean isExistInDB(String id, String pass) throws FileNotFoundException {
 		File authFile = new File(Constants.AUTH_LIST);
 		Scanner scanner = new Scanner(authFile);
 		
