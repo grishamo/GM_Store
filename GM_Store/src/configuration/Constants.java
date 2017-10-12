@@ -8,5 +8,5 @@ public class Constants {
 	public final static String AUTH_LIST = ROOT_PATH + "/src/db_files/auth.txt";
 	public final static String EMPLOYEE_LIST = ROOT_PATH + "/src/db_files/employees.txt";
 	public final static String CUSTOMERS_LIST = ROOT_PATH + "/src/db_files/customers.txt";
-
+	public final static String PRODUCTS_LIST = ROOT_PATH + "/src/db_files/products.txt";
 }

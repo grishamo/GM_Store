@@ -1,7 +1,10 @@
 package server;
 
+import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -13,34 +16,35 @@ public class ClientHandler implements Runnable{
 	
     Socket clientSocket;
     PrintStream response;
-    Scanner request;
+    DataInputStream request;
     String reqData;
     
     public ClientHandler(Socket clientSocket) throws IOException{
         this.clientSocket = clientSocket;
         this.response = new PrintStream(clientSocket.getOutputStream());
-        this.request = new Scanner(clientSocket.getInputStream());
+        this.request = new DataInputStream(clientSocket.getInputStream());
     }
     
     @Override
     public void run() {
-        while(true){
+        		
 		    try {
-		    		
-		    	
-		    		reqData = request.nextLine();	
+		    		response.println("Welcome");
 //		    		Employee grisha = new Cashier("grisha", "317612950", "04813131173", 1234, 1);
 //		    		grisha.save();
 		    		
+		    		while(true) {
+		    			reqData = request.readLine();	
+		    			
+			    		if( reqData.length() > 0 ) {
+			    			ServerRequestHandler requestHandler = new ServerRequestHandler(reqData);
+			    			String respStr = requestHandler.response();
+			    			
+			    			response.println(respStr);
+			    			
+			    		}
+		    		}
 		    		
-		    		ServerRequestHandler requestHandler = new ServerRequestHandler(reqData);
-		    		String respStr = requestHandler.response();
-				response.println(respStr);	
-		    		
-		    }
-		    catch( AuthExceptions e ) {
-			    	System.out.println(e.getMessage());
-			    	response.println("null");
 		    }
 		    catch (Exception e) {
 		    		System.out.println(e.getMessage());
@@ -52,6 +56,6 @@ public class ClientHandler implements Runnable{
 					e1.printStackTrace();
 				}
 		    }
-		}
+		
     }
 }  

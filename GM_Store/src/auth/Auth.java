@@ -24,18 +24,8 @@ public class Auth {
 		this.id = signInData.get("id").toString();
 		this.password = signInData.get("password").toString();
 		
-		if ( this.isExistInDB( id, password ) ) {
-			System.out.println("User Exist!");
-			this.responseStr = this.getEmployeeById(id);
-			if( responseStr == null ) {
-				throw new AuthExceptions("Employee: " + id + " doesn't exist!");
-			}
-		}
-		else {
-			throw new AuthExceptions("User doesn't exist!");
-		};
-		
-		return true;
+		return this.isExistInDB( id, password );
+
 	}
 	
 	// Methods: ----------------------------------------------------------------------------

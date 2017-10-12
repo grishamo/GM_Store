@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
@@ -35,6 +36,8 @@ public class SignInScreen {
 	private JPasswordField passwordField;
 	private PrintStream outputStream;
 	private JSONObject jsonData;
+	String serverResponse;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -56,7 +59,9 @@ public class SignInScreen {
 	 * @wbp.parser.entryPoint
 	 */
 	public SignInScreen(PrintStream request) {
-		initialize(request);
+		jsonData = new JSONObject();
+		outputStream = request;
+		initialize();
 	}
 	
 	public SignInScreen() {
@@ -66,10 +71,11 @@ public class SignInScreen {
 		JOptionPane.showMessageDialog(null, text);
 	}
 	
+	
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize(PrintStream output) {
+	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,11 +102,9 @@ public class SignInScreen {
 		passwordField.setBounds(151, 101, 215, 26);
 		frame.getContentPane().add(passwordField);
 		
-		jsonData = new JSONObject();
-		outputStream = output;
 		
-		btnSignIn.addActionListener(new ActionListener() {
-			
+		btnSignIn.addActionListener( new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				JSONObject signInJson = new JSONObject();
@@ -113,10 +117,11 @@ public class SignInScreen {
 					
 					jsonData.put("signin", signInJson);
 					
-					outputStream.println(jsonData.toJSONString() + '\n');
+					//send sign in data to server
+					outputStream.println(jsonData.toJSONString());
 					System.out.println("SignIn data sent: " + jsonData.toJSONString());
 					
-//					JOptionPane.showMessageDialog(null, "Data Sent:\n" + "Id: " + signInJson.get("id")  + " \nPassword: " + signInJson.get("password"));
+
 				}	
 					
 				

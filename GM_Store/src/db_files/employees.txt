@@ -1,1 +1,1 @@
-{"workPlaceId":"[]","empType":"cashier","Tel":"0548131174","Id":"317612950","EmpId":"1","Name":"grisha"}
+{"storeId":"1","empType":"cashier","tel":"0548131174","id":"1","empId":"1","name":"grisha"}

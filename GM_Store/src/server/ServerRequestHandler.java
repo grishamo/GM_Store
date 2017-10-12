@@ -17,6 +17,7 @@ public class ServerRequestHandler {
 		
 		private String responseStr;
 		private JSONObject reqObj;
+		private JSONObject responseObj;
 		private JSONParser jsonParser;
 		private Reports reports;
 		
@@ -31,32 +32,45 @@ public class ServerRequestHandler {
 		public ServerRequestHandler (String clientData) throws 
 		IOException, ParseException, AuthExceptions, EmployeeException 
 		{
-			jsonParser = new  JSONParser();
-			Reports reports = new Reports();
 			Auth signIn = new  Auth();
+			jsonParser = new  JSONParser();
+			reports = new Reports();
+			responseObj = new JSONObject();
+			responseStr = "";
 			
 			reqObj = ( JSONObject ) jsonParser.parse(clientData);
 			
 			for (Object key : reqObj.keySet()) {
 		        
 		        String keyStr = (String) key;
-		        JSONObject keyvalue = (JSONObject) reqObj.get(keyStr);
-		        
 		        System.out.println("ServerRequestHandler:KEY: "+ keyStr);
 		        
 		        switch( keyStr ) {
+		        
 			        case "signin":
-			        		if ( signIn.isAuth(keyvalue) ) {
-			        			this.responseStr = reports.getEmployeeById( (String) keyvalue.get("id") );
-			        		}	  
-			        		else { this.responseStr = null; }
+			        	
+			        		JSONObject signInValue = (JSONObject) reqObj.get(keyStr);
+			        		if ( signIn.isAuth(signInValue) ) {
+			        			this.responseStr = reports.getEmployeeById( (String) signInValue.get("id") );
+			        		}	   
+			        		else { this.responseStr = "null"; }
 				        	break;
+				        	
 			        case "setCashier":
+			        	
 //			        		Employee newEmp = new Cashier(keyvalue);
 			        		break;
+			        		
 			        case "getAllCustomers":
-//			        		this.responseStr = reports.getAllCustomers();
-			        		break;
+			        	
+		        			this.responseStr = reports.getAllCustomers();
+		        			break;
+			        		
+			        case "getProductsByStore":
+			        		String storeId = (String) reqObj.get(keyStr);
+			        		this.responseStr = reports.getProductsByStore(storeId);
+		        			break;
+		        			
 		        }   
 		    }
 			

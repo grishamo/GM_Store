@@ -18,12 +18,11 @@ public class Server {
     	 	ArrayList<ObjectOutputStream> clientstreams = new ArrayList<ObjectOutputStream>();
     	
     		try {
-            ServerSocket mySocket = new ServerSocket(5000);
+            ServerSocket mySocket = new ServerSocket(8000);
             while(true){
                 try {
-                    System.out.println("Ready to receive");
                     Socket client = mySocket.accept();
-                    clientstreams.add(new ObjectOutputStream(client.getOutputStream()));
+//                    clientstreams.add(new ObjectOutputStream(client.getOutputStream()));
                     System.out.println(client.getInetAddress().getHostAddress() + " connected to the Server");
                     Thread t = new Thread(new ClientHandler(client));
                     t.start();
