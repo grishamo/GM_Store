@@ -70,7 +70,11 @@ public class ServerRequestHandler {
 			        		String storeId = (String) reqObj.get(keyStr);
 			        		this.responseStr = reports.getProductsByStore(storeId);
 		        			break;
-		        			
+
+			        case "updateProductQuantity":
+			        		JSONObject productToUpdate = (JSONObject) reqObj.get(keyStr);
+			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
+		        			break;
 		        }   
 		    }
 			

@@ -1,7 +1,11 @@
 package reports;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 import org.json.simple.JSONObject;
@@ -92,6 +96,48 @@ public class Reports {
 		
 		scanner.close();
 		return returnObj.toString();
+	}
+	
+	public String updateProductQuantity(JSONObject product) throws ParseException, IOException {
+		
+		BufferedReader file = new BufferedReader(new FileReader(Constants.PRODUCTS_LIST));
+        StringBuffer inputBuffer = new StringBuffer();
+        
+        JSONObject currProduct = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+		int prodQuantity = Integer.parseInt( (String) product.get("quantity"));
+		int currQuantity;
+		
+        String storeId = (String) product.get("storeId");
+        String prodName = (String) product.get("name");
+        String line;
+
+        while ((line = file.readLine()) != null) {
+        	
+        		if ( line.contains(prodName) && line.contains("\"" + storeId + "\"") ) {
+       
+				currProduct = (JSONObject) jsonparser.parse(line);
+				currQuantity = Integer.parseInt((String) currProduct.get("quantity") );
+				currProduct.put("quantity", String.valueOf(currQuantity-prodQuantity));
+				inputBuffer.append(currProduct.toJSONString());
+				System.out.println(currProduct.toJSONString());
+        		}
+        		else {
+        			inputBuffer.append(line);
+        		}
+        			
+            inputBuffer.append('\n');
+        }
+        String inputStr = inputBuffer.toString();
+		
+        file.close();
+        
+        FileOutputStream fileOut = new FileOutputStream(Constants.PRODUCTS_LIST);
+        fileOut.write(inputStr.getBytes());
+        fileOut.close();
+        
+        return "done";
+ 
 	}
 	
 }

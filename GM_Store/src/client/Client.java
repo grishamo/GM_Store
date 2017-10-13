@@ -47,6 +47,8 @@ public class Client {
 							
 							CashierScreen cashierScn = new CashierScreen(responseObj, response, request);
 							cashierScn.frame.setVisible(true);
+							while(!cashierScn.cont()) {}
+							
 							
 							// close sign screen;
 							// open cashier screen

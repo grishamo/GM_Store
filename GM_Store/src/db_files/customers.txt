@@ -1,2 +1,2 @@
-{"name":"Bob", "status": "old", "id":"016896527", "tel":"0547123493", "numOfDeals": "1", "sumOfDeals": "30"}
-{"name":"Maria", "status": "vip", "id":"016898961", "tel":"0547189632", "numOfDeals": "2", "sumOfDeals": "100"}
+{"name":"Belujy", "status": "old", "id":"016896527", "tel":"0547123493", "numOfDeals": "1", "sumOfDeals": "30"}
+{"name":"Gadi", "status": "vip", "id":"016898961", "tel":"0547189632", "numOfDeals": "2", "sumOfDeals": "100"}
