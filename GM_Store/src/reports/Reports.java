@@ -33,14 +33,19 @@ public class Reports {
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws EmployeeException
+	 * @throws ParseException 
 	 */
-	public String getEmployeeById( String id ) throws FileNotFoundException, EmployeeException {
+	public String getEmployeeById( String id ) throws FileNotFoundException, EmployeeException, ParseException {
 		File empFile = new File(Constants.EMPLOYEE_LIST);
 		Scanner scanner = new Scanner(empFile);
+		JSONObject employee = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
 		
 		while ( scanner.hasNextLine() ) {
 			   String lineFromFile = scanner.nextLine();
-			   if(lineFromFile.contains(id) ) { 
+			   employee = (JSONObject) jsonparser.parse(lineFromFile);
+			   
+			   if( employee.get("id").equals(id) ) { 
 				   scanner.close();
 			       return lineFromFile;
 			   }
@@ -218,7 +223,12 @@ public class Reports {
 		return "done";
 	}
 	
-	
+	/**
+	 * Update sale List
+	 * @param product
+	 * @return
+	 * @throws IOException
+	 */
 	public String updateSaleList(JSONObject product) throws IOException {
 		FileWriter fw = new FileWriter(Constants.SALES_LIST, true);
 	    BufferedWriter bw = new BufferedWriter(fw);
@@ -237,4 +247,27 @@ public class Reports {
 	    
 		return "done";
 	}
+	
+	public String getAllSalesList() throws ParseException, FileNotFoundException {
+		File salesFile = new File(Constants.SALES_LIST);
+		Scanner scanner = new Scanner(salesFile);
+		
+		JSONObject returnObj = new JSONObject();
+		JSONObject sale = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+		
+		while ( scanner.hasNextLine() ) {
+		   String lineFromFile = scanner.nextLine();
+		   sale = (JSONObject) jsonparser.parse(lineFromFile);
+		   
+		   String currDate = (String) sale.get("date");
+		   returnObj.put( currDate, sale);
+		  
+		}
+		
+		scanner.close();
+		return returnObj.toString();
+	}
+	
+	
 }

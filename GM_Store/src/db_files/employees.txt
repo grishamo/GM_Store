@@ -1,3 +1,4 @@
 {"storeId":"1","empType":"cashier","tel":"0548131174","id":"1","empId":"1","name":"Grisha"}
-{"storeId":"1","empType":"cashier","tel":"0548131174","id":"2","empId":"2","name":"Masha"}
-{"numOfSales":"8","empId":"3","sumOfSales":"2520.0","empType":"seller","name":"Ben","tel":"0548131174","id":"3","storeId":"1"}
+{"storeId":"2","empType":"cashier","tel":"0548131174","id":"4","empId":"4","name":"Korri"}
+{"storeId":"1","empType":"manager","tel":"0548131174","id":"2","empId":"2","name":"Masha"}
+{"numOfSales":"9","empId":"3","sumOfSales":"2570.0","empType":"seller","name":"Ben","tel":"0548131174","id":"3","storeId":"1"}

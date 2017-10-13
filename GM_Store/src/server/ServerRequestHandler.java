@@ -85,6 +85,11 @@ public class ServerRequestHandler {
 			        		JSONObject newCustomer = (JSONObject) reqObj.get(keyStr);
 //			        		Customer newCust = new Customer(name, tel, id, status) 
 //			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
+			        		break;
+			        		
+			        case "getAllSalesList":
+			        		this.responseStr = reports.getAllSalesList();
+			        		break;
 		        }   
 		    }
 			

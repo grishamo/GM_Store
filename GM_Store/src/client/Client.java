@@ -54,9 +54,10 @@ public class Client {
 							// open cashier screen
 							break;
 						case "manager":
-							// close sign in screen
-							// open manager screen
-							break;
+							
+							ManagerScreen managerScn = new ManagerScreen(responseObj, response, request);
+							managerScn.frame.setVisible(true);
+							while(true) {}
 					}
 				}
 				else {
