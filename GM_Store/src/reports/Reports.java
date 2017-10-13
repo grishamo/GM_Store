@@ -269,5 +269,26 @@ public class Reports {
 		return returnObj.toString();
 	}
 	
+	public String getSellersByStore(String storeId) throws FileNotFoundException, ParseException {
+		File empFile = new File(Constants.EMPLOYEE_LIST);
+		Scanner scanner = new Scanner(empFile);
+		JSONObject returnObj = new JSONObject();
+		JSONObject seller = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+		
+		while ( scanner.hasNextLine() ) {
+			   String lineFromFile = scanner.nextLine();
+			   seller = (JSONObject) jsonparser.parse(lineFromFile);
+			   
+			   if( seller.get("storeId").equals(storeId) && seller.get("empType").equals("seller")) {
+				   returnObj.put( (String) seller.get("id"), seller);
+			   }
+			   
+			}
+		
+		scanner.close();
+		return returnObj.toString();
+	}
+	
 	
 }

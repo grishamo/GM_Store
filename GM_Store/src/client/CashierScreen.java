@@ -39,15 +39,16 @@ public class CashierScreen {
 
 	JFrame frame;
 	private JTextField totalProdPrice;
-	private JTextField sellerId;
 	private JSONObject allCustomers;
 	private JSONObject allProducts;
+	private JSONObject allSellers;
 	private JSONObject employeeData;
 	private JSONParser jsonparser = new JSONParser();
 	private JTable productsTable;
 	private DefaultTableModel defaultTableModel = new DefaultTableModel();
 	private JComboBox quantitySelect = new JComboBox();
 	private JComboBox productsList = new JComboBox();
+	private JComboBox sellerComboBox = new JComboBox();
 	double totalPrice = 0;
 	private DataInputStream serverResponse;
 	private PrintStream serverRequest;
@@ -98,6 +99,14 @@ public class CashierScreen {
 		//Server response for all Customers
 		resString = serverResponse.readLine();
 		allCustomers = (JSONObject) jsonparser.parse(resString);
+		
+		// Get All Sellers by Store Id
+		reqObject.put("getSellersByStore", (String) employeeData.get("storeId"));
+		serverRequest.println(reqObject.toJSONString());
+		
+		//Server response for getSellersByStore
+		resString = serverResponse.readLine();
+		allSellers = (JSONObject) jsonparser.parse(resString);
 		
 		// Server request for Products
 		getAllProducts();
@@ -197,11 +206,6 @@ public class CashierScreen {
 		lblEmployeeId.setBounds(25, 477, 92, 26);
 		frame.getContentPane().add(lblEmployeeId);
 		
-		sellerId = new JTextField();
-		sellerId.setBounds(86, 477, 85, 26);
-		sellerId.setColumns(10);
-		frame.getContentPane().add(sellerId);
-		
 		JButton btnBuy = new JButton("BUY!");
 		btnBuy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -282,6 +286,16 @@ public class CashierScreen {
 		ClearAllButton.setBounds(443, 471, 117, 38);
 		frame.getContentPane().add(ClearAllButton);
 		
+	
+		sellerComboBox.setBounds(81, 478, 117, 26);
+		sellerComboBox.addItem(null);
+		for (Object key : allSellers.keySet()) {
+	        String keyStr = (String) key;
+	        JSONObject seller = (JSONObject) allSellers.get(keyStr);
+	        sellerComboBox.addItem(seller.get("empId"));
+		}
+		frame.getContentPane().add(sellerComboBox);
+		
 		FillTableData();
 	}
 	
@@ -293,7 +307,7 @@ public class CashierScreen {
 		totalProdPrice.setText(null);
 		DefaultTableModel model = (DefaultTableModel) productsTable.getModel();
 		model.setRowCount(0);
-		sellerId.setText(null);
+		sellerComboBox.setSelectedIndex(0);
 		productsList.setSelectedIndex(0);
 		quantitySelect.removeAllItems();
 	}
@@ -370,7 +384,14 @@ public class CashierScreen {
 			prodName = (String) productsTable.getValueAt(i, 0);
 			quantity = String.valueOf(productsTable.getValueAt(i, 1));
 			prodCost = String.valueOf(productsTable.getValueAt(i, 2));
-			empId = sellerId.getText();
+			
+			Object emIdObj = sellerComboBox.getSelectedItem();
+			if(emIdObj == null) {
+				empId = "";
+			}
+			else {				
+				empId = (String)sellerComboBox.getSelectedItem();
+			}
 			
 			productObj.put("empId", empId);
 			productObj.put("prodCost", prodCost);

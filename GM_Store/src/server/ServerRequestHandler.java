@@ -20,6 +20,7 @@ public class ServerRequestHandler {
 		private JSONObject responseObj;
 		private JSONParser jsonParser;
 		private Reports reports;
+		private String storeId;
 		
 		/**
 		 * Constructor
@@ -65,9 +66,9 @@ public class ServerRequestHandler {
 			        	
 		        			this.responseStr = reports.getAllCustomers();
 		        			break;
-			        		
+			        		 
 			        case "getProductsByStore":
-			        		String storeId = (String) reqObj.get(keyStr);
+			        		storeId = (String) reqObj.get(keyStr);
 			        		this.responseStr = reports.getProductsByStore(storeId);
 		        			break;
 
@@ -89,6 +90,11 @@ public class ServerRequestHandler {
 			        		
 			        case "getAllSalesList":
 			        		this.responseStr = reports.getAllSalesList();
+			        		break;
+			        		
+			        case "getSellersByStore":
+			        		storeId = (String) reqObj.get(keyStr);
+				        	this.responseStr = reports.getSellersByStore(storeId);
 			        		break;
 		        }   
 		    }

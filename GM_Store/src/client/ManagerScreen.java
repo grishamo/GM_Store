@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -22,9 +23,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import java.awt.Font;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -38,6 +42,9 @@ public class ManagerScreen {
 	private PrintStream serverRequest;
 	private JSONObject allSalesList = new JSONObject();
 	private JSONParser jsonparser = new JSONParser();
+	private JComboBox productSelect = new JComboBox();
+	private JComboBox employeeSelect = new JComboBox();
+	private JComboBox storeSelect = new JComboBox();
 	
 	/**
 	 * Launch the application.
@@ -87,7 +94,7 @@ public class ManagerScreen {
 		
 		serverRequest.println(reqObj.toJSONString());
 		resString = serverResponse.readLine();
-		if( resString.length() > 0 ) {
+		if( resString != null || resString.length() > 0 ) {
 			allSalesList = (JSONObject) jsonparser.parse(resString);
 		}
 	}
@@ -113,9 +120,21 @@ public class ManagerScreen {
 		frame.getContentPane().add(separator);
 		
 		// HEADER SELECTION ---------------------------------------------------------
-		JComboBox employeeSelect = new JComboBox();
+		
+		//EMPLOYEE COMBO BOX
 		employeeSelect.setBounds(241, 106, 97, 24);
 		employeeSelect.setMaximumRowCount(10);
+		employeeSelect.addItem(null);
+		
+		for(Object key : allSalesList.keySet()) {
+			String keyStr = (String) key;
+			JSONObject products = (JSONObject) allSalesList.get(keyStr);
+			String employee = (String)products.get("empId");
+			if( employee.length() > 0 && !isInCombo(employeeSelect, employee) ) {
+				employeeSelect.addItem(products.get("empId"));
+			}
+		}
+		
 		frame.getContentPane().add(employeeSelect);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -128,6 +147,23 @@ public class ManagerScreen {
 		scrollPane.setViewportView(mainTable);
 		
 		JButton SubmitBtn = new JButton("Save to file");
+		SubmitBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String currEmployee = (String) employeeSelect.getSelectedItem();
+				String currProduct = (String) productSelect.getSelectedItem();
+				String currStore = (String) storeSelect.getSelectedItem();
+				
+				String fileName = currStore + '_' + currProduct + '_' + currStore + ".txt";
+				try {
+					saveReport(fileName);
+					clearData();
+					JOptionPane.showMessageDialog(null, "Report Saved Succesfully!.");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		SubmitBtn.setBounds(564, 467, 117, 38);
 		frame.getContentPane().add(SubmitBtn);
 		
@@ -140,13 +176,30 @@ public class ManagerScreen {
 		clearBtn.setBounds(442, 467, 117, 38);
 		frame.getContentPane().add(clearBtn);
 		
-		JComboBox productSelect = new JComboBox();
+		//PRODUCT COMBO BOX
 		productSelect.setMaximumRowCount(10);
 		productSelect.setBounds(132, 106, 97, 24);
+		productSelect.addItem(null);
+		for(Object key : allSalesList.keySet()) {
+			String keyStr = (String) key;
+			JSONObject products = (JSONObject) allSalesList.get(keyStr);
+			
+			if(!isInCombo(productSelect, (String)products.get("product"))) {
+				productSelect.addItem(products.get("product"));
+			}
+		}
 		frame.getContentPane().add(productSelect);
 		
 		// STORE COMBO BOX
-		JComboBox storeSelect = new JComboBox();
+		storeSelect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object currStore  = storeSelect.getSelectedItem();
+				if( currStore != null) {
+					updateProductSelect(currStore.toString());
+					updateEmployeeSelect(currStore.toString());
+				}
+			}
+		});
 		storeSelect.setMaximumRowCount(10);
 		storeSelect.setBounds(23, 106, 97, 24);
 		storeSelect.addItem(null);
@@ -183,9 +236,15 @@ public class ManagerScreen {
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				updateTable(allSalesList);
+				String currEmployee = (String) employeeSelect.getSelectedItem();
+				String currProduct = (String) productSelect.getSelectedItem();
+				String currStore = (String) storeSelect.getSelectedItem();
+				
+				updateTable(allSalesList, currEmployee, currProduct, currStore);
+				
 			}
 		});
+		
 		btnSubmit.setBounds(350, 104, 117, 29);
 		frame.getContentPane().add(btnSubmit);
 		
@@ -202,6 +261,40 @@ public class ManagerScreen {
 		FillTableData();
 	}
 	
+	/**
+	 * Update product select by store id
+	 * @param storeId
+	 */
+	public void updateProductSelect(String storeId) {
+		productSelect.removeAllItems();
+		productSelect.addItem(null); 
+		for(Object key : allSalesList.keySet()) {
+			String keyStr = (String) key;
+			JSONObject products = (JSONObject) allSalesList.get(keyStr);
+			String currProduct = (String)products.get("product");
+			String currStore = (String)products.get("storeId");
+			
+			if(!isInCombo(productSelect, currProduct) && currStore.equals(storeId)) {
+				productSelect.addItem(products.get("product"));
+			}
+		}
+	}
+	
+	public void updateEmployeeSelect(String storeId) {
+		employeeSelect.removeAllItems();
+		employeeSelect.addItem(null); 
+		
+		for(Object key : allSalesList.keySet()) {
+			String keyStr = (String) key;
+			JSONObject products = (JSONObject) allSalesList.get(keyStr);
+			String currEmployee = (String)products.get("empId");
+			String currStore = (String)products.get("storeId");
+			
+			if(!isInCombo(employeeSelect, currEmployee) && currStore.equals(storeId)) {
+				employeeSelect.addItem(products.get("empId"));
+			}
+		}
+	}
 	
 	/**
 	 * Check if item exist in the comboBox
@@ -227,7 +320,17 @@ public class ManagerScreen {
 		return false;
 	}
 	
-	public void updateTable(JSONObject data) {
+	/**
+	 * Update table data - the grate spaghetti !!!
+	 * @param data
+	 * @param currEmployee
+	 * @param currProduct
+	 * @param currStore
+	 */
+	public void updateTable(JSONObject data, String currEmployee, String currProduct, String currStore) {
+		DefaultTableModel model = (DefaultTableModel) mainTable.getModel();
+		model.setRowCount(0);
+		
 		for (Object key : data.keySet()) {
 			String keyStr = (String) key;
 			
@@ -238,11 +341,52 @@ public class ManagerScreen {
 	        String empId = (String) product.get("empId");
 	        String cost = (String) product.get("sumOfSale");
 	        
-	        defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
-	      
+	        // Sorry for the spaghetti !!
+	        if( currStore == null && currProduct == null && currEmployee == null) {
+	        		defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        }
+	        else if( currStore == null && currProduct == null && currEmployee != null ) {
+	        		if( currEmployee.equals(empId)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else if ( currStore == null && currProduct != null && currEmployee == null ) {
+		        	if( currProduct.equals(prodName)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else if ( currStore == null && currProduct != null && currEmployee != null ) {
+		        	if( currProduct.equals(prodName) && currEmployee.equals(empId)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else if ( currStore != null && currProduct == null && currEmployee == null ) {
+		        	if( currStore.equals(storeId) ) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else if ( currStore != null && currProduct == null && currEmployee != null ) {
+		        	if( currStore.equals(storeId) && currEmployee.equals(empId)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else if ( currStore != null && currProduct != null && currEmployee == null ) {
+		        	if( currStore.equals(storeId) && currProduct.equals(prodName)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	        else {
+		        	if( currStore.equals(storeId) && currProduct.equals(prodName) && currEmployee.equals(empId)) {
+	        			defaultTableModel.addRow(new Object[] { keyStr, prodName, storeId, empId, cost});
+	        		}
+	        }
+	       
 		}
 	}
 	
+	/**
+	 * Fill Table With Column
+	 */
 	public void FillTableData() {
 
 		defaultTableModel.addColumn("Date");
@@ -261,5 +405,47 @@ public class ManagerScreen {
 	private void clearData() {
 		DefaultTableModel model = (DefaultTableModel) mainTable.getModel();
 		model.setRowCount(0);
+	}
+	
+	/**
+	 * Save current table view to the file
+	 * @param fileName
+	 * @throws IOException
+	 */
+	private void saveReport(String fileName) throws IOException {
+		
+		PrintWriter cleaner = new PrintWriter(fileName);
+		cleaner.print("");
+		cleaner.close();
+		
+		FileWriter fw = new FileWriter(fileName, true);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    PrintWriter out = new PrintWriter(bw);
+	 
+		String line;
+		
+		// Table headers
+		line = String.format("%-30s %-15s %-15s %-15s %-15s", "Date", "Product", "Store", "Employee", "Price");
+		out.println(line);
+		
+		// Separator
+		for(int i=0; i < 100; i++) out.print("-");
+		out.println("");
+		
+	    int rows = defaultTableModel.getRowCount();
+	    
+	    for(int i = 0; i < rows; i++) {
+			String Date = (String) mainTable.getValueAt(i, 0);
+			String Product = String.valueOf(mainTable.getValueAt(i, 1));
+			String Store = String.valueOf(mainTable.getValueAt(i, 2));
+			String Employee = String.valueOf(mainTable.getValueAt(i, 3));
+			String Price = String.valueOf(mainTable.getValueAt(i, 4));
+			
+			line = String.format("%-30s %-15s %-15s %-15s %-15s", Date, Product, Store, Employee, Price);
+			out.println(line);
+	    }
+	    
+	    
+	    out.close();
 	}
 }
