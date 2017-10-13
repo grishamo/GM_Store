@@ -32,7 +32,7 @@ public class Server {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Unable to start.");
+            System.out.println("Unable to start:" + e.getMessage() );
             e.printStackTrace();
         }
     }

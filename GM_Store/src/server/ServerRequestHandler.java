@@ -56,7 +56,7 @@ public class ServerRequestHandler {
 			        		else { this.responseStr = "null"; }
 				        	break;
 				        	
-			        case "setCashier":
+			        case "setNewEmpoyee":
 			        	
 //			        		Employee newEmp = new Cashier(keyvalue);
 			        		break;
@@ -71,10 +71,20 @@ public class ServerRequestHandler {
 			        		this.responseStr = reports.getProductsByStore(storeId);
 		        			break;
 
-			        case "updateProductQuantity":
+			        case "purchaseAction":
 			        		JSONObject productToUpdate = (JSONObject) reqObj.get(keyStr);
-			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
+			        		
+			        		String updateProduct = reports.updateProductQuantity(productToUpdate);
+			        		String updateEmployee = reports.updateEmployeeInfo(productToUpdate);
+			        		String updateSaleList = reports.updateSaleList(productToUpdate);
+			        		
+			        		this.responseStr = "done";
 		        			break;
+		        			
+			        case "newCustomer":
+			        		JSONObject newCustomer = (JSONObject) reqObj.get(keyStr);
+//			        		Customer newCust = new Customer(name, tel, id, status) 
+//			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
 		        }   
 		    }
 			
