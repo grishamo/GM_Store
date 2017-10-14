@@ -5,10 +5,10 @@
 {"cost":"300","quantity":"2","name":"Elegant pants","store":"1"}
 {"name":"Elegant pants", "cost": "300", "store": "2", "quantity": "25"}
 {"cost":"50","quantity":"247","name":"T-Shirt","store":"2"}
-{"cost":"50","quantity":"10","name":"T-Shirt","store":"1"}
+{"cost":"50","quantity":"8","name":"T-Shirt","store":"1"}
 {"cost":"250","quantity":"398","name":"Shirt","store":"2"}
 {"cost":"250","quantity":"125","name":"Shirt","store":"1"}
 {"name":"Sweater", "cost": "540", "store": "2", "quantity": "140"}
 {"cost":"540","quantity":"30","name":"Sweater","store":"1"}
 {"cost":"1100","quantity":"218","name":"Coat","store":"2"}
-{"name":"Coat", "cost": "1100", "store": "1", "quantity": "5"}
+{"cost":"1100","quantity":"4","name":"Coat","store":"1"}

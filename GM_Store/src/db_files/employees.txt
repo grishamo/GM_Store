@@ -1,5 +1,6 @@
-{"storeId":"1","empType":"cashier","tel":"0548131174","id":"1","empId":"1","name":"Grisha"}
-{"storeId":"2","empType":"cashier","tel":"0548131174","id":"4","empId":"4","name":"Korri"}
-{"storeId":"1","empType":"manager","tel":"0548131174","id":"2","empId":"2","name":"Masha"}
-{"numOfSales":"16","empId":"3","sumOfSales":"3620.0","empType":"seller","name":"Ben","tel":"0548131174","id":"3","storeId":"1"}
-{"numOfSales":"3","empId":"5","sumOfSales":"2700.0","empType":"seller","name":"Gal","tel":"0548131174","id":"11","storeId":"2"}
+{"empId":"1","bank":"1234","empType":"manager","name":"Masha-KAL","tel":"0548131174","id":"1","storeId":"1"}
+{"empId":"2","bank":"233","empType":"cashier","name":"bobik","tel":"2323","id":"2","storeId":"1"}
+{"empId":"3","bank":"434","empType":"manager","name":"Dasha","tel":"3423","id":"3","storeId":"2"}
+{"numOfSales":"0","empId":"4","bank":"352","sumOfSales":"0","empType":"seller","name":"Ben","tel":"545","id":"44","storeId":"1"}
+{"numOfSales":"0","empId":"5","bank":"4234","sumOfSales":"0","empType":"seller","name":"Gal","tel":"32334","id":"22","storeId":"2"}
+{"empId":"6","bank":"233","empType":"cashier","name":"Grisha","tel":"0548131173","id":"317612950","storeId":"2"}

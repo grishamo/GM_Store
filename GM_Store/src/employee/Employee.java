@@ -1,8 +1,10 @@
 package employee;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -16,21 +18,23 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import configuration.Constants;
 
-public class Employee implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Employee {
 	
 	protected String name;
 	protected String last_name;
 	protected String id;
 	protected String tel;
-	protected int bankAccount;
+	protected int storeId;
+	protected String password;
+	protected int bank;
 	protected int employeeNumber;
-	protected Set<Integer> workPlacesId = new LinkedHashSet<Integer>();
 	
+	protected String authFile;
 	protected String employeesFile;
 	
 	/** ======================================================
@@ -48,20 +52,22 @@ public class Employee implements Serializable {
 			String inputName, 
 			String id, 
 			String tel, 
+			String password,
+			int storeId,
 			int bankAccount, 
 			int empNumber) throws EmployeeException, IOException
 	{
+		this.password = password; 
+		this.storeId = storeId;
 		this.name = inputName;
 		this.id = id;
 		this.tel = tel;
-		this.bankAccount = bankAccount;
+		this.bank = bankAccount;
 		this.employeeNumber = empNumber;
-		this.employeesFile = Constants.EMPLOYEE_LIST;
 		
-	}
-
-	 public Employee(JSONObject keyvalue) {
-		// TODO Auto-generated constructor stub
+		this.employeesFile = Constants.EMPLOYEE_LIST;
+		this.authFile = Constants.AUTH_LIST;
+		
 	}
 
 	/** ------------------------------------------------------
@@ -73,11 +79,12 @@ public class Employee implements Serializable {
 	public String toString() {
 		JSONObject employee = new JSONObject();
 		
-		employee.put("Name", this.name);
-		employee.put("Id", this.id);
-		employee.put("Tel", this.tel);
-		employee.put("EmpId", Integer.toString(this.employeeNumber) );
-		employee.put("workPlaceId", this.workPlacesId.toString());
+		employee.put("name", this.name);
+		employee.put("id", this.id);
+		employee.put("tel", this.tel);
+		employee.put("bank", Integer.toString(this.bank));
+		employee.put("empId", Integer.toString(this.employeeNumber) );
+		employee.put("storeId", Integer.toString(this.storeId));
 		
 		return employee.toJSONString();
 	}
@@ -87,35 +94,26 @@ public class Employee implements Serializable {
 	public String getTel () { return this.tel; }
 	public int getEmployeeNumber () { return this.employeeNumber; }
 	public String getName () { return this.name; }
-	public Set<Integer> getAllWorkPlaces () { return this.workPlacesId; }
 	
 	// SETTERS :
-	/** ------------------------------------------------------
-	 * Set work place id of employee
-	 * @param workId
-	 * @throws EmployeeException
-	 ------------------------------------------------------ */
-	public void setWorkPlaceId(int workId) throws EmployeeException {
-		if ( this.workPlacesId.add(workId) ) {}
-		else {
-			throw new EmployeeException("Failed to add work place to " + this.name);
-		};
-	}
 	
-	/** ------------------------------------------------------
+	/**
 	 * Check if the employee exist in the employee list
 	 * @return
-	 ------------------------------------------------------ */
+	 * @throws ParseException */
 	
-	public boolean isEmployeeExist () {
+	public boolean isEmployeeExist () throws ParseException {
 		File empFile = new File (this.employeesFile);
+		JSONObject empJson = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
 		
 		try {
 		    Scanner scan = new Scanner(empFile);
 
 		    while (scan.hasNextLine()) {
 		        String line = scan.nextLine();
-		        if( line.indexOf(this.id) > -1 ) {
+		        empJson = (JSONObject) jsonparser.parse(line);
+		        if( empJson.get("id").equals(this.id) ) {
 		        		scan.close();
 		        		return true;
 		        }
@@ -133,9 +131,10 @@ public class Employee implements Serializable {
 	 * Save Employee to employees list file
 	 * @throws IOException
 	 * @throws EmployeeException 
-	 * 	 -------------------------------------------------------- */
+	 * 	 -------------------------------------------------------- 
+	 * @throws ParseException */
 	
-	public void save() throws IOException, EmployeeException {
+	public String save() throws IOException, EmployeeException, ParseException {
 	
 		if( !this.isEmployeeExist() ) {
 			
@@ -146,67 +145,102 @@ public class Employee implements Serializable {
 		    out.println(this.toString());
 		    out.close();
 		    
+		    return "done";
 		}
 		else {
-			throw new EmployeeException("Employee allready exist!");
-		}
-	}
-
-	/** -------------------------------------------------------- 
-	 * Serialize object 
-	 * @throws IOException
-	 --------------------------------------------------------*/
-	public void serialize() throws IOException {
-		String fileName;
-		FileWriter fw = new FileWriter(this.employeesFile);
-		fw.close();
-		
-		FileOutputStream fout = null;
-		ObjectOutputStream oos = null;
-
-		try {
-			fileName = this.employeesFile.replace(".txt", ".ser");
-			fout = new FileOutputStream(fileName);
-			oos = new ObjectOutputStream(fout);
-			oos.writeObject(this);
-
-			System.out.println("Employee Saved");
-
-		} catch (Exception ex) {
-			
-			ex.printStackTrace();
-			
-		} finally {
-
-			if (fout != null) {
-				try {
-					fout.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if (oos != null) {
-				try {
-					oos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
+			return "";
 		}
 	}
 	
-	/** ------------------------------------------------------
-	 * Identify Employee object by id + randomNumber + name
-	 ------------------------------------------------------ */
-	@Override
-	public int hashCode() {
-		Random rnd = new Random();
-		int result;
-		
-		result = rnd.nextInt() + Integer.parseInt(this.id);
-		return result; 
+	/**
+	 * Save Auth information
+	 * @throws IOException
+	 */
+	public void saveToAuth() throws IOException {
+		FileWriter fw = new FileWriter(this.authFile, true);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    PrintWriter out = new PrintWriter(bw);
+	    JSONObject authDate = new JSONObject();
+	    
+	    authDate.put("id", this.id);
+	    authDate.put("password", this.password);
+	    
+	    out.println(authDate.toString());
+	    out.close();
 	}
+	
+	/**
+	 * Set Employee id to the next maximum empId
+	 * @return
+	 */
+	public int setEmployeeId() {
+		File empFile = new File (this.employeesFile);
+		JSONObject empJson = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+		int max = 0;
+		
+		try {
+		    Scanner scan = new Scanner(empFile);
+
+		    while (scan.hasNextLine()) {
+		        String line = scan.nextLine();
+		        empJson = (JSONObject) jsonparser.parse(line);
+		        if( Integer.parseInt((String)empJson.get("empId")) > max) {
+		        		max = Integer.parseInt((String)empJson.get("empId"));
+		        }
+		        
+		    }
+		    scan.close();
+		    return ++max;
+		    
+		} catch(ParseException | FileNotFoundException e) { 
+			e.printStackTrace();
+			return 0;
+		}
+	}
+	
+	/**
+	 * Update Employee List
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void updateEmployeeList() throws IOException, ParseException {
+		
+		BufferedReader file = new BufferedReader(new FileReader(Constants.EMPLOYEE_LIST));
+        StringBuffer inputBuffer = new StringBuffer();
+		
+        JSONObject currEmployee = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+        
+		String line;
+		
+		while ((line = file.readLine()) != null) {
+			currEmployee = (JSONObject) jsonparser.parse(line);
+			
+	    		// find line in the employee list, update and save to temporary buffer
+	    		if ( Integer.parseInt((String)currEmployee.get("empId")) == this.employeeNumber ) {		
+				inputBuffer.append(this.toString());
+				System.out.println(this.toString());
+	    		}
+	    		else {
+	    			inputBuffer.append(line);
+	    		}
+	        inputBuffer.append('\n');
+		}
+		
+		// convert buffer to string
+        String inputStr = inputBuffer.toString();
+		
+        // close products list
+        file.close();
+        
+        // open products list for writing, and replace the content with temporary buffer
+        FileOutputStream fileOut = new FileOutputStream(Constants.EMPLOYEE_LIST);
+        fileOut.write(inputStr.getBytes());
+        fileOut.close();
+
+	}
+	
+	public void updateAuthText() {}
 	
 }

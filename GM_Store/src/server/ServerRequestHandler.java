@@ -11,16 +11,20 @@ import auth.AuthExceptions;
 import employee.Cashier;
 import employee.Employee;
 import employee.EmployeeException;
+import employee.Manager;
+import employee.Seller;
 import reports.Reports;
 
 public class ServerRequestHandler {
 		
 		private String responseStr;
 		private JSONObject reqObj;
+		private JSONObject reqData;
 		private JSONObject responseObj;
 		private JSONParser jsonParser;
 		private Reports reports;
 		private String storeId;
+		private Employee newEmp;
 		
 		/**
 		 * Constructor
@@ -49,21 +53,36 @@ public class ServerRequestHandler {
 		        switch( keyStr ) {
 		        
 			        case "signin":
-			        	
-			        		JSONObject signInValue = (JSONObject) reqObj.get(keyStr);
-			        		if ( signIn.isAuth(signInValue) ) {
-			        			this.responseStr = reports.getEmployeeById( (String) signInValue.get("id") );
+			        		reqData = (JSONObject) reqObj.get(keyStr);
+			        		if ( signIn.isAuth(reqData) ) {
+			        			this.responseStr = reports.getEmployeeById( (String) reqData.get("id") );
 			        		}	   
 			        		else { this.responseStr = "null"; }
 				        	break;
 				        	
-			        case "setNewEmpoyee":
-			        	
-//			        		Employee newEmp = new Cashier(keyvalue);
+			        case "addEmployee":
+			        		reqData = (JSONObject) reqObj.get(keyStr);
+			        		switch ( (String) reqData.get("empType") ) {
+			        			case "cashier":
+				        			newEmp = new Cashier(reqData);
+				        			break;
+			        			case "manager":
+				        			newEmp = new Manager(reqData);
+				        			break;
+			        			case "seller":
+				        			newEmp = new Seller(reqData);
+				        			break;
+			        		}
+
+		        			this.responseStr = newEmp.save();
 			        		break;
 			        		
+			        case "deleteEmployee":
+			        		reqData = (JSONObject) reqObj.get(keyStr);
+//		        			this.responseStr = reports.deleteEmployee();
+		        			break;		
+		        			
 			        case "getAllCustomers":
-			        	
 		        			this.responseStr = reports.getAllCustomers();
 		        			break;
 			        		 
@@ -73,17 +92,17 @@ public class ServerRequestHandler {
 		        			break;
 
 			        case "purchaseAction":
-			        		JSONObject productToUpdate = (JSONObject) reqObj.get(keyStr);
+			        		reqData = (JSONObject) reqObj.get(keyStr);
 			        		
-			        		String updateProduct = reports.updateProductQuantity(productToUpdate);
-			        		String updateEmployee = reports.updateEmployeeInfo(productToUpdate);
-			        		String updateSaleList = reports.updateSaleList(productToUpdate);
+			        		String updateProduct = reports.updateProductQuantity(reqData);
+			        		String updateEmployeeSale = reports.updateEmployeeSale(reqData);
+			        		String updateSaleList = reports.updateSaleList(reqData);
 			        		
 			        		this.responseStr = "done";
 		        			break;
 		        			
 			        case "newCustomer":
-			        		JSONObject newCustomer = (JSONObject) reqObj.get(keyStr);
+			        		reqData = (JSONObject) reqObj.get(keyStr);
 //			        		Customer newCust = new Customer(name, tel, id, status) 
 //			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
 			        		break;
@@ -95,6 +114,10 @@ public class ServerRequestHandler {
 			        case "getSellersByStore":
 			        		storeId = (String) reqObj.get(keyStr);
 				        	this.responseStr = reports.getSellersByStore(storeId);
+			        		break;
+			        		
+			        case "getAllEmployeesData":
+			        		this.responseStr = reports.getAllEmployeesData();
 			        		break;
 		        }   
 		    }

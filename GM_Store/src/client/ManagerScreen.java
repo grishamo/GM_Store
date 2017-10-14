@@ -16,6 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
@@ -119,7 +120,7 @@ public class ManagerScreen {
 		separator.setBounds(25, 49, 665, 12);
 		frame.getContentPane().add(separator);
 		
-		// HEADER SELECTION ---------------------------------------------------------
+		// ---------------------------------------------------------
 		
 		//EMPLOYEE COMBO BOX
 		employeeSelect.setBounds(241, 106, 97, 24);
@@ -194,10 +195,10 @@ public class ManagerScreen {
 		storeSelect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object currStore  = storeSelect.getSelectedItem();
-				if( currStore != null) {
-					updateProductSelect(currStore.toString());
-					updateEmployeeSelect(currStore.toString());
-				}
+				
+				updateProductSelect(currStore);
+				updateEmployeeSelect(currStore);
+				
 			}
 		});
 		storeSelect.setMaximumRowCount(10);
@@ -214,6 +215,13 @@ public class ManagerScreen {
 		frame.getContentPane().add(storeSelect);
 		
 		JButton btnAdminScreen = new JButton("Admin Screen");
+		btnAdminScreen.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AdminDialog dialog = new AdminDialog(serverResponse, serverRequest);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+			}
+		});
 		btnAdminScreen.setBounds(25, 467, 117, 38);
 		frame.getContentPane().add(btnAdminScreen);
 		
@@ -262,10 +270,10 @@ public class ManagerScreen {
 	}
 	
 	/**
-	 * Update product select by store id
+	 * Update Products combo box each time user change the store id
 	 * @param storeId
 	 */
-	public void updateProductSelect(String storeId) {
+	public void updateProductSelect(Object storeId) {
 		productSelect.removeAllItems();
 		productSelect.addItem(null); 
 		for(Object key : allSalesList.keySet()) {
@@ -274,13 +282,20 @@ public class ManagerScreen {
 			String currProduct = (String)products.get("product");
 			String currStore = (String)products.get("storeId");
 			
-			if(!isInCombo(productSelect, currProduct) && currStore.equals(storeId)) {
+			if (storeId == null) {
+				productSelect.addItem(products.get("product"));
+			}
+			else if(!isInCombo(productSelect, currProduct) && currStore.equals(storeId.toString())) {
 				productSelect.addItem(products.get("product"));
 			}
 		}
 	}
 	
-	public void updateEmployeeSelect(String storeId) {
+	/**
+	 * Update Employee combo box each time user change the store id
+	 * @param storeId
+	 */
+	public void updateEmployeeSelect(Object storeId) {
 		employeeSelect.removeAllItems();
 		employeeSelect.addItem(null); 
 		
@@ -290,9 +305,16 @@ public class ManagerScreen {
 			String currEmployee = (String)products.get("empId");
 			String currStore = (String)products.get("storeId");
 			
-			if(!isInCombo(employeeSelect, currEmployee) && currStore.equals(storeId)) {
-				employeeSelect.addItem(products.get("empId"));
+			
+			if( currEmployee.length() > 0 && !isInCombo(employeeSelect, currEmployee) ) {
+				if( storeId == null ) {
+					employeeSelect.addItem(products.get("empId"));
+				}
+				else if( currStore.equals(storeId.toString()) ) {
+					employeeSelect.addItem(products.get("empId"));
+				}
 			}
+			
 		}
 	}
 	

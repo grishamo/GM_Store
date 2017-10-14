@@ -171,7 +171,7 @@ public class Reports {
 	 * @throws IOException 
 	 * @throws NumberFormatException 
 	 */
-	public String updateEmployeeInfo(JSONObject product) throws ParseException, NumberFormatException, IOException {
+	public String updateEmployeeSale(JSONObject product) throws ParseException, NumberFormatException, IOException {
 		String empId = (String) product.get("empId");
 		double prodCost = Double.parseDouble((String) product.get("prodCost"));
 		
@@ -248,6 +248,12 @@ public class Reports {
 		return "done";
 	}
 	
+	/**
+	 * Get all sales
+	 * @return
+	 * @throws ParseException
+	 * @throws FileNotFoundException
+	 */
 	public String getAllSalesList() throws ParseException, FileNotFoundException {
 		File salesFile = new File(Constants.SALES_LIST);
 		Scanner scanner = new Scanner(salesFile);
@@ -269,6 +275,13 @@ public class Reports {
 		return returnObj.toString();
 	}
 	
+	/**
+	 * Get all sellers by store id
+	 * @param storeId
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws ParseException
+	 */
 	public String getSellersByStore(String storeId) throws FileNotFoundException, ParseException {
 		File empFile = new File(Constants.EMPLOYEE_LIST);
 		Scanner scanner = new Scanner(empFile);
@@ -290,5 +303,29 @@ public class Reports {
 		return returnObj.toString();
 	}
 	
+	/**
+	 * Get all employees data
+	 * @return
+	 * @throws FileNotFoundException 
+	 * @throws ParseException 
+	 */
+	public String getAllEmployeesData() throws FileNotFoundException, ParseException {
+		File empFile = new File(Constants.EMPLOYEE_LIST);
+		Scanner scanner = new Scanner(empFile);
+		JSONObject returnObj = new JSONObject();
+		JSONObject seller = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+		
+		while ( scanner.hasNextLine() ) {
+		   String lineFromFile = scanner.nextLine();
+		   seller = (JSONObject) jsonparser.parse(lineFromFile);
+	   
+		   returnObj.put( (String) seller.get("empId"), seller);
+   
+		}
+		
+		scanner.close();
+		return returnObj.toString();
+	}
 	
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 public class Cashier extends Employee {
 
@@ -21,14 +22,20 @@ public class Cashier extends Employee {
 	 * @throws EmployeeException
 	 * @throws IOException
 	 */
-	public Cashier(
-			String inputName, 
-			String id, 
-			String tel, 
-			int bankAccount, 
-			int empNumber) throws EmployeeException, IOException
+	public Cashier() throws EmployeeException, IOException
 	{
-		super(inputName, "317612950", "0548131174", bankAccount, empNumber);
+		super("","","","",0,0,0);
+	}
+
+
+	public Cashier(JSONObject empObj) throws EmployeeException, IOException {
+		super( empObj.get("name").toString(), 
+			   empObj.get("id").toString(), 
+			   empObj.get("tel").toString(), 
+			   empObj.get("password").toString(),
+			   Integer.parseInt(empObj.get("storeId").toString()),
+			   Integer.parseInt(empObj.get("bank").toString()), 
+			   Integer.parseInt(empObj.get("empId").toString()));
 	}
 
 
@@ -36,11 +43,12 @@ public class Cashier extends Employee {
 	public String toString() {
 		 JSONObject employee = new JSONObject();
 		
-		employee.put("Name", this.name);
-		employee.put("Id", this.id);
-		employee.put("Tel", this.tel);
-		employee.put("EmpId", Integer.toString(this.employeeNumber) );
-		employee.put("workPlaceId", this.workPlacesId.toString());
+		employee.put("name", this.name);
+		employee.put("id", this.id);
+		employee.put("tel", this.tel);
+		employee.put("bank", Integer.toString(this.bank));
+		employee.put("empId", Integer.toString(this.employeeNumber) );
+		employee.put("storeId", Integer.toString(this.storeId));
 		employee.put("empType", "cashier");
 		
 		return employee.toString();
@@ -50,8 +58,9 @@ public class Cashier extends Employee {
 	 * Save Employee to employees list file
 	 * @throws IOException
 	 * @throws EmployeeException 
+	 * @throws ParseException 
 	 */
-	public void save() throws IOException, EmployeeException {
+	public String save() throws IOException, EmployeeException, ParseException {
 	
 		if( !this.isEmployeeExist() ) {
 			
@@ -59,12 +68,17 @@ public class Cashier extends Employee {
 		    BufferedWriter bw = new BufferedWriter(fw);
 		    PrintWriter out = new PrintWriter(bw);
 				
+		    this.employeeNumber = setEmployeeId();
+		    
 		    out.println(this.toString());
 		    out.close();
 		    
+		    this.saveToAuth();
+		    
 		}
 		else {
-			throw new EmployeeException("Employee allready exist!");
+			this.updateEmployeeList();
 		}
+		return "done";
 	}
 }
