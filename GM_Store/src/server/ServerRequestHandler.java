@@ -77,9 +77,9 @@ public class ServerRequestHandler {
 		        			this.responseStr = newEmp.save();
 			        		break;
 			        		
-			        case "deleteEmployee":
-			        		reqData = (JSONObject) reqObj.get(keyStr);
-//		        			this.responseStr = reports.deleteEmployee();
+			        case "deleteEmployeeById":
+			        		String reqEmpId = (String) reqObj.get(keyStr);
+		        			this.responseStr = reports.deleteEmployeeById(reqEmpId);
 		        			break;		
 		        			
 			        case "getAllCustomers":

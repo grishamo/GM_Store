@@ -328,4 +328,64 @@ public class Reports {
 		return returnObj.toString();
 	}
 	
+	/**
+	 * Delete Employee by Id
+	 * @param id
+	 * @return
+	 */
+	public String deleteEmployeeById(String id) {
+		try {
+			deleteEmployeeInFile(Constants.EMPLOYEE_LIST, id);
+			deleteEmployeeInFile(Constants.AUTH_LIST, id);
+			return "done";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	/**
+	 * Delete employee by file and id
+	 * @param srcFile
+	 * @param id
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void deleteEmployeeInFile(String srcFile, String id) throws IOException, ParseException {
+		BufferedReader file = new BufferedReader(new FileReader(srcFile));
+        StringBuffer inputBuffer = new StringBuffer();
+		
+        JSONObject currEmployee = new JSONObject();
+		JSONParser jsonparser = new JSONParser();
+        
+		String line;
+		
+		while ((line = file.readLine()) != null) {
+			currEmployee = (JSONObject) jsonparser.parse(line);
+	    		// find line in the employee list, update and save to temporary buffer
+	    		if ( !currEmployee.get("id").equals(id)  ) {
+	    			inputBuffer.append(line);
+	    			inputBuffer.append('\n');
+	    		}
+	        
+		}
+		
+		// convert buffer to string
+        String inputStr = inputBuffer.toString();
+		
+        // close products list
+        file.close();
+        
+        // open products list for writing, and replace the content with temporary buffer
+        FileOutputStream fileOut = new FileOutputStream(srcFile);
+        fileOut.write(inputStr.getBytes());
+        fileOut.close();
+        
+	}
+	
 }

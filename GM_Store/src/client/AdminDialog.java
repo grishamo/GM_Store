@@ -162,6 +162,15 @@ public class AdminDialog extends JDialog {
 		contentPanel.add(btnCancel);
 		
 		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					deleteEmployeeById();
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		});
 		btnDelete.setBounds(23, 404, 117, 29);
 		contentPanel.add(btnDelete);
 		
@@ -284,8 +293,11 @@ public class AdminDialog extends JDialog {
 	/**
 	 * Update Employees table
 	 * @param data
+	 * @throws Exception 
 	 */
-	private void updateTable(JSONObject data) {
+	private void updateTable(JSONObject data) throws Exception {
+		DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
+		model.setRowCount(0);
 		
 		for (Object key : data.keySet()) {
 			String keyStr = (String) key;
@@ -358,6 +370,31 @@ public class AdminDialog extends JDialog {
         
 	}
 	
+	private void deleteEmployeeById() throws IOException {
+		JSONObject reqObj = new JSONObject();
+		String id = idField.getText();
+		String respString;
+		
+		reqObj.put("deleteEmployeeById", id);
+		
+		serverRequest.println(reqObj.toJSONString());
+		respString = serverResponse.readLine();
+		
+		if( respString != null && respString.equals("done")) {
+			clearFields();
+			try {
+				getAllEmployeesData();
+				updateTable(allEmployeesList);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(null, "Employee deleted succesfully");
+		} else {
+			JOptionPane.showMessageDialog(null, "Something went wrong, please try again later");
+		}
+	}
+	
 	/**
 	 * Add new employee to the DB
 	 * @throws IOException 
@@ -395,9 +432,6 @@ public class AdminDialog extends JDialog {
 		if( serverResp != null && serverResp.length() > 0) {
 			clearFields();
 			try {
-				DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
-				model.setRowCount(0);
-				
 				getAllEmployeesData();
 				updateTable(allEmployeesList);
 			} catch (Exception e) {
@@ -410,6 +444,7 @@ public class AdminDialog extends JDialog {
 			JOptionPane.showMessageDialog(null, "Something went wrong, please try again later.");
 		}
 	}
+	
 	
 	/**
 	 * Clear input fields
