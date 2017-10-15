@@ -1,10 +1,1 @@
-{"date":"Fri Oct 13 23:55:02 IDT 2017","empId":"3","product":"T-Shirt","sumOfSale":"50.0","storeId":"1"}
-{"date":"Fri Oct 13 23:59:06 IDT 2017","empId":"3","product":"Elegant pants","sumOfSale":"300.0","storeId":"1"}
-{"date":"Fri Oct 13 23:59:15 IDT 2017","empId":"3","product":"Sport pants","sumOfSale":"100.0","storeId":"1"}
-{"date":"Sat Oct 14 00:00:55 IDT 2017","empId":"","product":"Jeans","sumOfSale":"300.0","storeId":"1"}
-{"date":"Sat Oct 14 00:01:08 IDT 2017","empId":"3","product":"T-Shirt","sumOfSale":"100.0","storeId":"1"}
-{"date":"Sat Oct 14 00:01:08 IDT 2017","empId":"3","product":"T-Shirt","sumOfSale":"100.0","storeId":"1"}
-{"date":"Sat Oct 14 00:01:17 IDT 2017","empId":"","product":"Jeans","sumOfSale":"300.0","storeId":"1"}
-{"date":"Sat Oct 14 00:24:52 IDT 2017","empId":"3","product":"T-Shirt","sumOfSale":"50.0","storeId":"1"}
-{"date":"Sat Oct 14 00:24:52 IDT 2017","empId":"3","product":"T-Shirt","sumOfSale":"50.0","storeId":"1"}
-{"date":"Sat Oct 14 00:24:52 IDT 2017","empId":"3","product":"Coat","sumOfSale":"1100.0","storeId":"1"}
+{"date":"Sun Oct 15 02:57:09 IDT 2017","empId":"6","product":"T-Shirt","sumOfSale":"50.0","storeId":"2"}

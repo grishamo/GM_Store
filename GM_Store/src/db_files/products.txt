@@ -4,7 +4,7 @@
 {"cost":"100","quantity":"49","name":"Sport pants","store":"1"}
 {"cost":"300","quantity":"2","name":"Elegant pants","store":"1"}
 {"name":"Elegant pants", "cost": "300", "store": "2", "quantity": "25"}
-{"cost":"50","quantity":"247","name":"T-Shirt","store":"2"}
+{"cost":"50","quantity":"246","name":"T-Shirt","store":"2"}
 {"cost":"50","quantity":"8","name":"T-Shirt","store":"1"}
 {"cost":"250","quantity":"398","name":"Shirt","store":"2"}
 {"cost":"250","quantity":"125","name":"Shirt","store":"1"}

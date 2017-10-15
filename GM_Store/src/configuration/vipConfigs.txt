@@ -1,0 +1,1 @@
+{"discount":"10","sumOfDeals":"5000"}

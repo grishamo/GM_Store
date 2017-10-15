@@ -1,2 +1,5 @@
 {"empId":"1","bank":"1234","empType":"manager","name":"Masha","tel":"0548131174","id":"1","storeId":"1"}
-{"empId":"2","bank":"244","empType":"manager","name":"Grisha","tel":"234234","id":"2","storeId":"2"}
+{"empId":"2","bank":"244","empType":"cashier","name":"Grisha","tel":"234234","id":"2","storeId":"2"}
+{"empId":"3","bank":"3412","empType":"cashier","name":"Adi","tel":"3212","id":"22","storeId":"1"}
+{"numOfSales":"0","empId":"4","bank":"3422","sumOfSales":"0","empType":"seller","name":"Gal","tel":"5345733","id":"11","storeId":"1"}
+{"numOfSales":"1","empId":"6","bank":"5345","sumOfSales":"50.0","empType":"seller","name":"Gabi","tel":"6456","id":"23","storeId":"2"}

@@ -76,6 +76,7 @@ public class AdminDialog extends JDialog {
 	}
 	
 	public AdminDialog() {
+		setResizable(false);
 		initialize();
 	}
 	

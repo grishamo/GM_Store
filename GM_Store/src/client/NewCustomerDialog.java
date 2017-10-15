@@ -49,6 +49,7 @@ public class NewCustomerDialog extends JDialog {
 		initialize();
 	}
 	public NewCustomerDialog() {
+		setResizable(false);
 		initialize();
 	}
 	

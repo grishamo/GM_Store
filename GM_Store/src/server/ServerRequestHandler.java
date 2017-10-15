@@ -97,6 +97,7 @@ public class ServerRequestHandler {
 			        		String updateProduct = reports.updateProductQuantity(reqData);
 			        		String updateEmployeeSale = reports.updateEmployeeSale(reqData);
 			        		String updateSaleList = reports.updateSaleList(reqData);
+//			        		String updateCustomerList = reports.updateCustomerList(reqData);
 			        		
 			        		this.responseStr = "done";
 		        			break;

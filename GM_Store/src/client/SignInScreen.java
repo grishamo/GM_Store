@@ -28,6 +28,8 @@ import com.jgoodies.forms.factories.DefaultComponentFactory;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import org.json.simple.JSONObject;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
 public class SignInScreen {
 
@@ -77,30 +79,36 @@ public class SignInScreen {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.setResizable(false);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JLabel lblUserName = new JLabel("Id :");
-		lblUserName.setBounds(70, 70, 74, 16);
+		lblUserName.setBounds(69, 95, 74, 16);
 		
 		textField = new JTextField();
-		textField.setBounds(151, 65, 215, 26);
+		textField.setBounds(150, 90, 215, 26);
 		textField.setColumns(10);
 		
 		JLabel lblPassword = new JLabel("Password :");
-		lblPassword.setBounds(70, 106, 67, 16);
+		lblPassword.setBounds(69, 131, 67, 16);
 		frame.getContentPane().setLayout(null);
 		frame.getContentPane().add(lblUserName);
 		frame.getContentPane().add(textField);
 		frame.getContentPane().add(lblPassword);
 		
 		JButton btnSignIn = new JButton("Sign In");
-		btnSignIn.setBounds(249, 139, 117, 29);
+		btnSignIn.setBounds(248, 164, 117, 29);
 		frame.getContentPane().add(btnSignIn);
 		
 		passwordField = new JPasswordField();
-		passwordField.setBounds(151, 101, 215, 26);
+		passwordField.setBounds(150, 126, 215, 26);
 		frame.getContentPane().add(passwordField);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Sign In", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(44, 52, 362, 174);
+		frame.getContentPane().add(panel);
 		
 		
 		btnSignIn.addActionListener( new ActionListener() {
