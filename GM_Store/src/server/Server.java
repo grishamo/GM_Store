@@ -22,7 +22,6 @@ public class Server {
             while(true){
                 try {
                     Socket client = mySocket.accept();
-//                    clientstreams.add(new ObjectOutputStream(client.getOutputStream()));
                     System.out.println(client.getInetAddress().getHostAddress() + " connected to the Server");
                     Thread t = new Thread(new ClientHandler(client));
                     t.start();

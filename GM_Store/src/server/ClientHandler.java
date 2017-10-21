@@ -30,8 +30,6 @@ public class ClientHandler implements Runnable{
         		
 		    try {
 		    		response.println("Welcome");
-//		    		Employee grisha = new Cashier("grisha", "317612950", "04813131173", 1234, 1);
-//		    		grisha.save();
 		    		
 		    		while(true) {
 		    			reqData = request.readLine();	

@@ -49,9 +49,6 @@ public class Client {
 							cashierScn.frame.setVisible(true);
 							while(!cashierScn.cont()) {}
 							
-							
-							// close sign screen;
-							// open cashier screen
 							break;
 						case "manager":
 							
