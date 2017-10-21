@@ -154,7 +154,7 @@ public class ManagerScreen {
 				String currProduct = (String) productSelect.getSelectedItem();
 				String currStore = (String) storeSelect.getSelectedItem();
 				
-				String fileName = currStore + '_' + currProduct + '_' + currStore + ".txt";
+				String fileName = currStore + '_' + currProduct + '_' + currEmployee + ".txt";
 				try {
 					saveReport(fileName);
 					clearData();
@@ -225,7 +225,14 @@ public class ManagerScreen {
 		btnAdminScreen.setBounds(25, 467, 117, 38);
 		frame.getContentPane().add(btnAdminScreen);
 		
-		JButton btnUpdateVipDiscount = new JButton("Update VIP Discount");
+		JButton btnUpdateVipDiscount = new JButton("All Customers");
+		btnUpdateVipDiscount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VipCustomersDialog vipDialog = new VipCustomersDialog(serverResponse, serverRequest);
+				vipDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				vipDialog.setVisible(true);
+			}
+		});
 		btnUpdateVipDiscount.setBounds(154, 467, 156, 38);
 		frame.getContentPane().add(btnUpdateVipDiscount);
 		

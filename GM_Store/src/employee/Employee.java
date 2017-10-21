@@ -241,6 +241,5 @@ public class Employee {
 
 	}
 	
-	public void updateAuthText() {}
 	
 }

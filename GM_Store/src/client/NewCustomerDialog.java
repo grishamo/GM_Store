@@ -14,11 +14,16 @@ import org.json.simple.JSONObject;
 import com.sun.javafx.tk.Toolkit;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class NewCustomerDialog extends JDialog {
 
@@ -27,6 +32,7 @@ public class NewCustomerDialog extends JDialog {
 	private JTextField idField;
 	private JTextField telField;
 	private PrintStream serverRequest;
+	private DataInputStream serverResponse;
 
 	/**
 	 * Launch the application.
@@ -44,8 +50,9 @@ public class NewCustomerDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public NewCustomerDialog(PrintStream serverRequest) {
+	public NewCustomerDialog(PrintStream serverRequest, DataInputStream serverResponse) {
 		this.serverRequest = serverRequest;
+		this.serverResponse = serverResponse;
 		initialize();
 	}
 	public NewCustomerDialog() {
@@ -54,7 +61,7 @@ public class NewCustomerDialog extends JDialog {
 	}
 	
 	public void initialize() {
-		setBounds(100, 100, 247, 300);
+		setBounds(100, 100, 247, 335);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -103,31 +110,19 @@ public class NewCustomerDialog extends JDialog {
 			telField.setBounds(6, 185, 235, 26);
 			contentPanel.add(telField);
 		}
+		
+		JComboBox statusComboBox = new JComboBox();
+		statusComboBox.setModel(new DefaultComboBoxModel(new String[] {"new", "vip"}));
+		statusComboBox.setBounds(6, 235, 91, 27);
+		contentPanel.add(statusComboBox);
+		
+		JLabel lblStatus = new JLabel("Status:");
+		lblStatus.setBounds(16, 214, 81, 16);
+		contentPanel.add(lblStatus);
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						JSONObject reqObj = new JSONObject();
-						JSONObject newCustomerObj = new JSONObject();
-						
-						newCustomerObj.put("name", nameField.getText());
-						newCustomerObj.put("id", idField.getText());
-						newCustomerObj.put("tel", telField.getText());
-						
-						reqObj.put("newCustomer", newCustomerObj);
-						
-						serverRequest.println(reqObj.toJSONString());
-						dispose();
-					}
-				});
-				okButton.setActionCommand("OK");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.addActionListener(new ActionListener() {
@@ -138,8 +133,36 @@ public class NewCustomerDialog extends JDialog {
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
+			{
+				JButton okButton = new JButton("Save");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						JSONObject reqObj = new JSONObject();
+						JSONObject newCustomerObj = new JSONObject();
+						String respString;
+						
+						newCustomerObj.put("name", nameField.getText());
+						newCustomerObj.put("id", idField.getText());
+						newCustomerObj.put("tel", telField.getText());
+						newCustomerObj.put("status", (String)statusComboBox.getSelectedItem());
+						
+						reqObj.put("newCustomer", newCustomerObj);
+						
+						serverRequest.println(reqObj.toJSONString());
+						try {
+							respString = serverResponse.readLine();
+							JOptionPane.showMessageDialog(null, "New Customer Created!");
+							dispose();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
+				okButton.setActionCommand("OK");
+				buttonPane.add(okButton);
+				getRootPane().setDefaultButton(okButton);
+			}
 		}
 	}
-
-
 }

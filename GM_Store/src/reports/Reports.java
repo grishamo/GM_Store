@@ -388,4 +388,129 @@ public class Reports {
         
 	}
 	
+	/**
+	 * Get VIP discount information
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws ParseException
+	 */
+	public String getVipDiscountInfo() throws FileNotFoundException, ParseException {
+		File empFile = new File(Constants.DISCOUNT_INFO);
+		Scanner scanner = new Scanner(empFile);
+		String returnStr = "";
+		
+		while ( scanner.hasNextLine() ) {
+		   String lineFromFile = scanner.nextLine();
+		   returnStr = lineFromFile;
+		}
+		
+		scanner.close();
+		return returnStr;
+	}
+	
+	/**
+	 * Update VIP Discount information
+	 */
+	public String updateVipDiscountInfo(JSONObject reqObj) throws IOException {
+		
+		PrintWriter cleaner = new PrintWriter(Constants.DISCOUNT_INFO);
+		cleaner.print("");
+		cleaner.close();
+		
+		FileWriter fw = new FileWriter(Constants.DISCOUNT_INFO, true);
+	    BufferedWriter bw = new BufferedWriter(fw);
+	    PrintWriter out = new PrintWriter(bw);
+	 
+		out.println(reqObj.toJSONString());
+		out.close();
+		return "done";
+	}
+	
+	/**
+	 * Update customers
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public String updateCustomerList (JSONObject obj) throws IOException, ParseException {
+		JSONObject customer = (JSONObject) obj.get("customer");
+		JSONParser jsonparser = new JSONParser();
+		double prodCost = Double.parseDouble((String) obj.get("prodCost"));
+		String customerId = (String)customer.get("id");
+		
+		//return if customer id is undefined
+		if( customerId.equals("") ) return "done";
+		
+		String discountInfo = getVipDiscountInfo();
+		JSONObject disountObj = (JSONObject) jsonparser.parse(discountInfo);
+		int sumOfpurchase = Integer.parseInt((String)disountObj.get("sumOfPurchases"));
+		
+		BufferedReader file = new BufferedReader(new FileReader(Constants.CUSTOMERS_LIST));
+        StringBuffer inputBuffer = new StringBuffer();
+		
+        JSONObject currCustomer = new JSONObject();
+        
+		String line;
+		int currNumOfDeals;
+		double currSumOfDeals;
+		
+		while ((line = file.readLine()) != null) {
+			currCustomer = (JSONObject) jsonparser.parse(line);
+			
+	    		// find line in the employee list, update and save to temporary buffer
+	    		if ( currCustomer.get("id").equals(customerId) ) {
+	   
+				currNumOfDeals = Integer.parseInt( (String) currCustomer.get("numOfDeals") );
+				currSumOfDeals = Double.parseDouble( (String) currCustomer.get("sumOfDeals") );
+				
+				currCustomer.put("numOfDeals", String.valueOf(++currNumOfDeals));
+				currCustomer.put("sumOfDeals", String.valueOf(currSumOfDeals + prodCost));
+				
+				if( (currSumOfDeals + prodCost) > sumOfpurchase) {
+					currCustomer.put("status", "vip");
+				}
+				
+				inputBuffer.append(currCustomer.toJSONString());
+				System.out.println(currCustomer.toJSONString());
+	    		}
+	    		else {
+	    			inputBuffer.append(line);
+	    		}
+	        inputBuffer.append('\n');
+		}
+		
+		// convert buffer to string
+        String inputStr = inputBuffer.toString();
+		
+        // close customers list
+        file.close();
+        
+        // open customers list for writing, and replace the content with temporary buffer
+        FileOutputStream fileOut = new FileOutputStream(Constants.CUSTOMERS_LIST);
+        fileOut.write(inputStr.getBytes());
+        fileOut.close();
+        
+		return "done";
+	}
+	
+	/**
+	 * Save log to the file
+	 * @param logTxt
+	 */
+	public void log(String logTxt) {
+		FileWriter fw;
+		
+		try {
+			fw = new FileWriter(Constants.LOGS_LIST, true);
+			BufferedWriter bw = new BufferedWriter(fw);
+		    PrintWriter out = new PrintWriter(bw);
+		    
+		    out.println(logTxt);
+		    out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	   
+	}
 }

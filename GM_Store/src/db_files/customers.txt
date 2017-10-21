@@ -1,2 +1,3 @@
-{"name":"Belujy", "status": "old", "id":"016896527", "tel":"0547123493", "numOfDeals": "1", "sumOfDeals": "30"}
-{"name":"Gadi", "status": "vip", "id":"016898961", "tel":"0547189632", "numOfDeals": "2", "sumOfDeals": "100"}
+{"numOfDeals":"1","name":"Belujy","sumOfDeals":"20.0","tel":"0547123493","id":"016896527","status":"old"}
+{"numOfDeals":"3","name":"Gadi","sumOfDeals":"460.0","tel":"0547189632","id":"016898961","status":"old"}
+{"numOfDeals":"0","name":"Bobik","sumOfDeals":"0","tel":"0347581638","id":"036498961","status":"old"}

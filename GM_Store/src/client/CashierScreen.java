@@ -42,6 +42,8 @@ public class CashierScreen {
 	private JSONObject allCustomers;
 	private JSONObject allProducts;
 	private JSONObject allSellers;
+	private JSONObject currentCustomer = new JSONObject();
+	private JSONObject discountInfo;
 	private JSONObject employeeData;
 	private JSONParser jsonparser = new JSONParser();
 	private JTable productsTable;
@@ -49,7 +51,9 @@ public class CashierScreen {
 	private JComboBox quantitySelect = new JComboBox();
 	private JComboBox productsList = new JComboBox();
 	private JComboBox sellerComboBox = new JComboBox();
+	private JComboBox customerList = new JComboBox();
 	double totalPrice = 0;
+	double discountPrice = 0;
 	private DataInputStream serverResponse;
 	private PrintStream serverRequest;
 	private boolean releaseBlock = false;
@@ -81,10 +85,9 @@ public class CashierScreen {
 	}
 	/**
 	 * Create the application.
-	 * @throws IOException 
-	 * @throws ParseException 
+	 * @throws Exception 
 	 */
-	public CashierScreen(JSONObject employeeData, DataInputStream serverResponse, PrintStream serverRequest) throws IOException, ParseException {
+	public CashierScreen(JSONObject employeeData, DataInputStream serverResponse, PrintStream serverRequest) throws Exception {
 		
 		JSONObject reqObject = new JSONObject();
 		String resString;
@@ -110,6 +113,7 @@ public class CashierScreen {
 		
 		// Server request for Products
 		getAllProducts();
+		getVipDiscountInfo();
 		
 		initialize();
 	}
@@ -172,8 +176,12 @@ public class CashierScreen {
 		JLabel lblAmount = new JLabel("Amount:");
 		lblAmount.setBounds(472, 79, 92, 26);
 		frame.getContentPane().add(lblAmount);
+		customerList.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectCustomerAction();
+			}
+		});
 		
-		JComboBox customerList = new JComboBox();
 		customerList.setBounds(17, 108, 161, 26);
 		frame.getContentPane().add(customerList);
 		
@@ -209,9 +217,8 @@ public class CashierScreen {
 		JButton btnBuy = new JButton("BUY!");
 		btnBuy.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO: get all sellers from the server
+				
 				try {
-					
 					purchaseAction();
 					
 					JOptionPane.showMessageDialog(null, "Thank You!\nDeal complete.");
@@ -240,7 +247,7 @@ public class CashierScreen {
 		JButton btnNewCustomer = new JButton("New Customer");
 		btnNewCustomer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				NewCustomerDialog dialog = new NewCustomerDialog(serverRequest);
+				NewCustomerDialog dialog = new NewCustomerDialog(serverRequest, serverResponse);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);
 			}
@@ -261,7 +268,7 @@ public class CashierScreen {
 				double prodPrice = Double.parseDouble(getProductPrice(productsList.getSelectedItem().toString())) * prodQ;
 				totalPrice += prodPrice;
 				
-				totalProdPrice.setText(String.valueOf(totalPrice));
+				updateTotalPrice();
 				defaultTableModel.addRow(new Object[] { prodName, prodQ, prodPrice });
 			}
 		});
@@ -304,12 +311,15 @@ public class CashierScreen {
 	 */
 	private void clearData() {
 		totalPrice = 0;
+		discountPrice = 0;
 		totalProdPrice.setText(null);
 		DefaultTableModel model = (DefaultTableModel) productsTable.getModel();
 		model.setRowCount(0);
 		sellerComboBox.setSelectedIndex(0);
 		productsList.setSelectedIndex(0);
 		quantitySelect.removeAllItems();
+		customerList.setSelectedIndex(0);
+		
 	}
 	
 	/**
@@ -398,6 +408,7 @@ public class CashierScreen {
 			productObj.put("name", prodName);
 			productObj.put("quantity", quantity);
 			productObj.put("storeId", (String) employeeData.get("storeId"));
+			productObj.put("customer", currentCustomer);
 			
 			reqObj.put("purchaseAction", productObj);
 			
@@ -424,6 +435,64 @@ public class CashierScreen {
 		String resString = serverResponse.readLine();
 		allProducts = (JSONObject) jsonparser.parse(resString);
 	}
+	
+	/**
+	 * Get VIP discount 
+	 * @throws Exception
+	 */
+	private void getVipDiscountInfo() throws Exception {
+		JSONObject reqObj = new JSONObject();
+		String resString;
+		reqObj.put("getVipDiscountInfo", "null");
+		
+		serverRequest.println(reqObj.toJSONString());
+		resString = serverResponse.readLine();
+		if( resString != null && resString.length() > 0 ) {
+			discountInfo = (JSONObject) jsonparser.parse(resString);
+		}
+		else {
+			throw new Exception("Customers Data empty");
+		}
+	}
+	
+	/**
+	 * Update total price
+	 */
+	private void updateTotalPrice() {
+		double discount = Double.parseDouble((String)discountInfo.get("discount"));
+		String currCustomerStatus = (String)currentCustomer.get("status");
+		
+		if( currCustomerStatus != null && currCustomerStatus.equals("vip") && discount != 0 ) {
+			discountPrice = totalPrice - (totalPrice / discount);
+			totalProdPrice.setText(String.valueOf(discountPrice));
+		}
+		else {
+			totalProdPrice.setText(String.valueOf(totalPrice));
+		}
+		
+		
+	}
+	
+	/**
+	 * Update total price by customer status and update current customer
+	 */
+	private void selectCustomerAction() {
+		String customer = (String) customerList.getSelectedItem();
+		customer = customer.replaceAll("\\s+"," ");
+		String[] customerArray = customer.split(" ");
+		int length = customerArray.length-1;
+		
+		if(length >= 2) {
+			currentCustomer.put("name", customerArray[0]);
+			currentCustomer.put("id", customerArray[1]);
+			currentCustomer.put("status", customerArray[2]);
+		}
+		
+		if(!customer.equals("") && totalPrice > 0) {
+			updateTotalPrice();
+		}
+	}
+	
 	
 	/**
 	 * Block Client.java - save socket connection

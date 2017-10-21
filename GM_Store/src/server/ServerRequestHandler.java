@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -8,6 +9,9 @@ import org.json.simple.parser.ParseException;
 
 import auth.Auth;
 import auth.AuthExceptions;
+import customer.Customer;
+import customer.NewCustomer;
+import customer.VipCustomer;
 import employee.Cashier;
 import employee.Employee;
 import employee.EmployeeException;
@@ -48,7 +52,7 @@ public class ServerRequestHandler {
 			for (Object key : reqObj.keySet()) {
 		        
 		        String keyStr = (String) key;
-		        System.out.println("ServerRequestHandler:KEY: "+ keyStr);
+		        reports.log(new Date() + ":ServerRequest: " + keyStr);
 		        
 		        switch( keyStr ) {
 		        
@@ -85,7 +89,16 @@ public class ServerRequestHandler {
 			        case "getAllCustomers":
 		        			this.responseStr = reports.getAllCustomers();
 		        			break;
-			        		 
+			        
+			        case "getVipDiscountInfo":
+	        				this.responseStr = reports.getVipDiscountInfo();
+	        				break;
+	        			
+			        case "updateVipDiscountInfo":
+			        		reqData = (JSONObject) reqObj.get(keyStr);
+        					this.responseStr = reports.updateVipDiscountInfo(reqData);
+        					break;
+        					
 			        case "getProductsByStore":
 			        		storeId = (String) reqObj.get(keyStr);
 			        		this.responseStr = reports.getProductsByStore(storeId);
@@ -97,15 +110,24 @@ public class ServerRequestHandler {
 			        		String updateProduct = reports.updateProductQuantity(reqData);
 			        		String updateEmployeeSale = reports.updateEmployeeSale(reqData);
 			        		String updateSaleList = reports.updateSaleList(reqData);
-//			        		String updateCustomerList = reports.updateCustomerList(reqData);
+			        		String updateCustomerList = reports.updateCustomerList(reqData);
 			        		
 			        		this.responseStr = "done";
 		        			break;
 		        			
 			        case "newCustomer":
 			        		reqData = (JSONObject) reqObj.get(keyStr);
-//			        		Customer newCust = new Customer(name, tel, id, status) 
-//			        		this.responseStr = reports.updateProductQuantity(productToUpdate);
+			        		Customer newCust;
+			        		switch ( (String) reqData.get("status") ) {
+			        			case "vip":
+				        			newCust = new VipCustomer(reqData);
+				        			newCust.save();
+				        			break;
+			        			default:
+			        				newCust = new NewCustomer(reqData);
+				        			newCust.save();
+				        			break;
+			        		}
 			        		break;
 			        		
 			        case "getAllSalesList":

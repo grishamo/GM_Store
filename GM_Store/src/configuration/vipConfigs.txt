@@ -1,1 +1,1 @@
-{"discount":"10","sumOfDeals":"5000"}
+{"sumOfPurchases":"10000","discount":"10"}

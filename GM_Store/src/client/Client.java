@@ -14,7 +14,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class Client {
-	public static void main (String [] args) throws ParseException {
+	public static void main (String [] args) throws Exception {
 		Socket socket = null;
 		String responseText = "";
 		JSONObject responseObj;

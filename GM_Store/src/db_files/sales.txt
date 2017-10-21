@@ -1,1 +1,4 @@
-{"date":"Sun Oct 15 02:57:09 IDT 2017","empId":"6","product":"T-Shirt","sumOfSale":"50.0","storeId":"2"}
+{"date":"Sat Oct 21 18:13:15 IDT 2017","empId":"","product":"T-Shirt","sumOfSale":"20.0","storeId":"1"}
+{"date":"Sat Oct 21 18:13:28 IDT 2017","empId":"","product":"Coat","sumOfSale":"200.0","storeId":"1"}
+{"date":"Sat Oct 21 18:13:53 IDT 2017","empId":"","product":"Jeans","sumOfSale":"200.0","storeId":"1"}
+{"date":"Sat Oct 21 18:17:43 IDT 2017","empId":"","product":"Sweater","sumOfSale":"60.0","storeId":"2"}

@@ -1,14 +1,14 @@
-{"cost":"300","quantity":"8","name":"Jeans","store":"1"}
-{"name":"Jeans", "cost": "300", "store": "2", "quantity": "2"}
-{"name":"Sport pants", "cost": "100", "store": "2", "quantity": "20"}
-{"cost":"100","quantity":"49","name":"Sport pants","store":"1"}
-{"cost":"300","quantity":"2","name":"Elegant pants","store":"1"}
-{"name":"Elegant pants", "cost": "300", "store": "2", "quantity": "25"}
-{"cost":"50","quantity":"246","name":"T-Shirt","store":"2"}
-{"cost":"50","quantity":"8","name":"T-Shirt","store":"1"}
-{"cost":"250","quantity":"398","name":"Shirt","store":"2"}
-{"cost":"250","quantity":"125","name":"Shirt","store":"1"}
-{"name":"Sweater", "cost": "540", "store": "2", "quantity": "140"}
-{"cost":"540","quantity":"30","name":"Sweater","store":"1"}
-{"cost":"1100","quantity":"218","name":"Coat","store":"2"}
-{"cost":"1100","quantity":"4","name":"Coat","store":"1"}
+{"cost":"100","quantity":"83","name":"Jeans","store":"1"}
+{"name":"Jeans", "cost": "100", "store": "2", "quantity": "54"}
+{"cost":"25","quantity":"0","name":"Sport pants","store":"2"}
+{"cost":"25","quantity":"49","name":"Sport pants","store":"1"}
+{"cost":"85","quantity":"20","name":"Elegant pants","store":"1"}
+{"name":"Elegant pants", "cost": "85", "store": "2", "quantity": "25"}
+{"cost":"10","quantity":"40","name":"T-Shirt","store":"2"}
+{"cost":"10","quantity":"48","name":"T-Shirt","store":"1"}
+{"cost":"20","quantity":"220","name":"Shirt","store":"2"}
+{"cost":"20","quantity":"125","name":"Shirt","store":"1"}
+{"cost":"30","quantity":"116","name":"Sweater","store":"2"}
+{"cost":"30","quantity":"30","name":"Sweater","store":"1"}
+{"cost":"200","quantity":"205","name":"Coat","store":"2"}
+{"cost":"200","quantity":"29","name":"Coat","store":"1"}
